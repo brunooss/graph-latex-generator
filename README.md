@@ -1,4 +1,4 @@
-# Gerador de Grafos para Exportação para LaTeX
+# Gerador de Grafos com Exportação para LaTeX
 
 # Escopo
 O projeto consiste em uma aplicação (web/multi-plataforma) para a geração de grafos a partir da entrada do usuário, com a possibilidade de exportação de código ```LaTeX``` e de imagem em formato ```.png```. Além da geração a partir da entrada manual, o usuário pode selecionar grafos predefinidos (ex.: grafo completo com N vértices, grafo bipartido, etc.).
