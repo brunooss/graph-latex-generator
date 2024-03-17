@@ -1,11 +1,11 @@
 # Gerador de Grafos para Exportação para LaTeX
 
 # Escopo
-O projeto consiste em uma aplicação (web/multi-plataforma??) para a geração de grafos a partir da entrada do usuário, com a possibilidade de exportação de código ```LaTeX``` e de imagem em formato ```.png```. Além da geração a partir da entrada manual, o usuário pode selecionar grafos predefinidos (ex.: grafo completo com N vértices, grafo bipartido, etc.??).
+O projeto consiste em uma aplicação (web/multi-plataforma) para a geração de grafos a partir da entrada do usuário, com a possibilidade de exportação de código ```LaTeX``` e de imagem em formato ```.png```. Além da geração a partir da entrada manual, o usuário pode selecionar grafos predefinidos (ex.: grafo completo com N vértices, grafo bipartido, etc.).
 
 ### Features do Sistema
 
-- [ ] O usuário deve ser capaz de adicionar um grafo (linguagem matemática ou gerador amigável na própria interface ou os dois, a definir)??
+- [ ] O usuário deve ser capaz de adicionar um grafo (em linguagem matemática ou com ferramenta gráfica da interface)
 - [ ] O usuário deve poder, durante a seleção, definir se o grafo é direcionado ou não
 - [ ] O usuário deve ser capaz de selecionar um grafo dentre uma coleção de grafos predefinidos
 - [ ] O usuário, após selecionar ou adicionar um grafo, deve ser capaz de editá-lo, adicionando/removendo vértices e arestas
@@ -20,11 +20,9 @@ O projeto consiste em uma aplicação (web/multi-plataforma??) para a geração 
 
 - Bruno Oliveira [@brunooss](https://github.com/brunooss): desenvolvedor _full-stack_
 - Laila Melo [@lailamvl](https://github.com/lailamvl): desenvolvedora _full-stack_
-- Thiago: desenvolvedor _full-stack_
+- Thiago [@trassis](https://github.com/trassis): desenvolvedor _full-stack_
 - 
 
 ### Tecnologias
 
-(A DEFINIR)
-
-O sistema contará com uma interface web (ou multi-plataforma??), que será desenvolvida com _React_ e _Typescript (ou javascript, vamos definir)_, além de um backend _serverless_ baseado em _Node.js_ servido pelo _Firebase Functions_ e um bando de dados NoSQL hospedado em nuvem servido pelo _Firebase Firestore_.
+O sistema contará com uma interface web/mobile, que será desenvolvida com _React_ e _Typescript_, além de um backend _serverless_ baseado em _Node.js_ servido pelo _Firebase Functions_ e um bando de dados NoSQL hospedado em nuvem servido pelo _Firebase Firestore_.
