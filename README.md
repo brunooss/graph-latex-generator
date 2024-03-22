@@ -39,3 +39,23 @@ O sistema contará com uma interface web/mobile, que será desenvolvida com _Rea
 - [ ] Como usuário, eu gostaria de poder adicionar um grafo nos favoritos
 - [ ] Como usuário, eu gostaria de ter acesso aos meus grafos criados recentemente
 - [ ] Como usuário, eu gostaria de poder acessar o sitema em múltiplos dispositivos
+
+### Backlog da Sprint
+
+- [ ] História 1: Como usuário, eu gostaria de adicionar um grafo no sistema
+    - Criar novo grafo completo
+    - Criar novo grafo vazio
+    - Criar novo grafo a partir de uma lista de adjacência
+
+
+- [ ] História 2: Como usuário, eu gostaria de acessar o código `Latex` do meu grafo.
+    - Criar modelos dos grafos disponíveis no latex
+    - Construir tradutor de js para latex
+    - Exportar o código
+
+- [ ] História 3: Como usuário, eu gostaria de alterar a quantidade de vértices e arestas do meu grafo
+    - Adicionar visualização para novos vértices e arestas
+    - Adicionar novos elementos na definição do grafo
+    - Atualizar o código 'Latex' gerado
+
+- [ ] História 4: Como usuário, eu gostaria de ser capaz de criar uma conta com email e senha
