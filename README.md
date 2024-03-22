@@ -26,3 +26,16 @@ O projeto consiste em uma aplicação (web/multi-plataforma) para a geração de
 ### Tecnologias
 
 O sistema contará com uma interface web/mobile, que será desenvolvida com _React_ e _Typescript_, além de um backend _serverless_ baseado em _Node.js_ servido pelo _Firebase Functions_ e um bando de dados NoSQL hospedado em nuvem servido pelo _Firebase Firestore_.
+
+### Backlog do Produto
+- [ ] Como usuário, eu gostaria de ser capaz de criar uma conta com email e senha
+- [ ] Como usuário, eu gostaria de adicionar um grafo no sistema
+- [ ] Como usuário, eu gostaria de selecionar um grafo entre um conjunto de grafos pré-definidos
+- [ ] Como usuário, eu gostaria de alterar a quantidade de vértices e arestas do meu grafo
+- [ ] Como usuário, eu gostaria de alterar a cor dos vértices do meu grafo
+- [ ] Como usuário, eu gostaria de poder tornar meu grafo direcionado ou não
+- [ ] Como usuário, eu gostaria de poder acessar o código '''LaTex''' do meu grafo
+- [ ] Como usuário, eu gostaria de poder exportar o grafo criado em formato '''.png'''
+- [ ] Como usuário, eu gostaria de poder adicionar um grafo nos favoritos
+- [ ] Como usuário, eu gostaria de ter acesso aos meus grafos criados recentemente
+- [ ] Como usuário, eu gostaria de poder acessar o sitema em múltiplos dispositivos
