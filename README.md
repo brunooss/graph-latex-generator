@@ -43,7 +43,7 @@ O sistema contará com uma interface web/mobile, que será desenvolvida com _Rea
 ### Backlog da Sprint
 
 - [ ] História 0: Setup Inicial
-    - Setup do projeto com Next.js e MUI
+    - Setup do projeto com Vite e MUI
     - Setup do projeto no Firebase (Authentication & Firestore Database)
     - Instalar biblioteca _Cytoscape.js_ para edição de grafos
       
