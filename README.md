@@ -42,20 +42,30 @@ O sistema contará com uma interface web/mobile, que será desenvolvida com _Rea
 
 ### Backlog da Sprint
 
-- [ ] História 1: Como usuário, eu gostaria de adicionar um grafo no sistema
-    - Criar novo grafo completo
-    - Criar novo grafo vazio
-    - Criar novo grafo a partir de uma lista de adjacência
+- [ ] História 0: Setup Inicial
+    - Setup do projeto com Next.js e MUI
+    - Setup do projeto no Firebase (Authentication & Firestore Database)
+    - Instalar biblioteca _Cytoscape.js_ para edição de grafos
+      
+- [ ] História 1: Como usuário, eu gostaria de ser capaz de criar uma conta com email e senha
+    - Criar tela de login [Laila]
+    - Criar tela de criação de conta [Laila]
+    - Criar tela de trocar senha [Bruno]
+    - Integrar páginas de autenticação com _Firebase Authentication_ [Bruno]
 
-
-- [ ] História 2: Como usuário, eu gostaria de acessar o código `Latex` do meu grafo.
-    - Criar modelos dos grafos disponíveis no latex
-    - Construir tradutor de js para latex
-    - Exportar o código
+- [ ] História 2: Como usuário, eu gostaria de adicionar um grafo no sistema
+    - Criação de página inicial com MUI [Bruno]
+    - Setup do editor visual com biblioteca _Cytoscape.js_ [Bruno]
+    - Botões na interface para criação de (grafo completo e grafo vazio) [Laila]
+    - Desenhar grafo novo em editor visual a partir de input de uma lista de adjacência [Thiago]
 
 - [ ] História 3: Como usuário, eu gostaria de alterar a quantidade de vértices e arestas do meu grafo
-    - Adicionar visualização para novos vértices e arestas
-    - Adicionar novos elementos na definição do grafo
-    - Atualizar o código 'Latex' gerado
+    - Adicionar interação para criar novos vértices e arestas (clique com botão direito ou apertar e segurar) [Bruno]
+    - Adicionar novos elementos nas informações da definição do grafo (vértices e arestas) [Thiago]
+    - Atualizar o código 'LaTeX' gerado executando a função novamente [Laila]
 
-- [ ] História 4: Como usuário, eu gostaria de ser capaz de criar uma conta com email e senha
+- [ ] História 4: Como usuário, eu gostaria de acessar o código `LaTeX` do meu grafo.
+    - Criar aba _'Código'_ para visualização do código `LaTeX` [Laila]
+    - Criar modelos padrão a serem exibidos no editor de grafos disponíveis no `LaTeX` [Laila]
+    - Fazer função que recebe informações de grafo construído em editor (coordenadas de vértices, cores, arestas) e gera código `LaTeX` [Thiago]
+    - Adicionar botão para exportar o código ou imagem .png [Bruno]
