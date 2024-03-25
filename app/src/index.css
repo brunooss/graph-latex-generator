@@ -1,3 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Old+South+Arabian&family=Redacted+Script:wght@300;400;700&display=swap");
+
+* {
+  font-family: "Redacted Script", sans-serif !important; /* Muda isso kkkkkkkkkkk (a propósito, se quiser usar outra fonte, pega no google fonts e importa na linha 1!) */
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

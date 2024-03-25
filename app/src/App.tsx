@@ -2,6 +2,7 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import { Button } from "@mui/material";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -9,25 +10,33 @@ function App() {
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <img
+          src={
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Directed_graph_no_background.svg/1200px-Directed_graph_no_background.svg.png"
+          }
+          className="logo"
+          alt="Grafo"
+        />
+        <img
+          src={
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Directed_acyclic_graph.svg/1280px-Directed_acyclic_graph.svg.png"
+          }
+          className="logo react"
+          alt="Outro Grafo"
+        />
       </div>
-      <h1>Vite + React</h1>
+      <h1>Gerador de Grafos com Exportação de Código LaTeX e .png</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+        <Button
+          variant="contained"
+          onClick={() => setCount((count) => count + 1)}
+        >
+          Gerar um grafo
+        </Button>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          Agora temos {count} {count > 1 ? "grafos" : "grafo"}
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }
