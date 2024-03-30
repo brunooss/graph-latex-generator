@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import cytoscape from 'cytoscape';
+
 
 export const GraphEditorPage: React.FC = () => {
   const navigate = useNavigate();
