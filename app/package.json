@@ -18,7 +18,9 @@
     "cytoscape": "^3.28.1",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
-    "react-router-dom": "^6.22.3"
+    "react-graph-vis": "^1.0.7",
+    "react-router-dom": "^6.22.3",
+    "react-vis-network-graph": "^3.0.1"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.21.0",
