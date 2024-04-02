@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 import Node from "../components/Node"
 import "./NewPage.css"
+import CreateNodeButton from "../components/NewNodeButton";
 
 export const NewPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export const NewPage: React.FC = () => {
   return (
     <div className="new-page">
       <Node/>
+      <CreateNodeButton/>
       <div className="button-container">
         <Button variant="contained" onClick={() => navigate("../")}>
           Voltar para a tela anterior
