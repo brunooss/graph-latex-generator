@@ -19,6 +19,7 @@ const CreateNodeButton = () => {
                 const newNode = <Node 
                     key={nodes.length}
                     />;
+
                 // setNodes(nodes.concat(<Node key={nodes.length} />));
                 setNodes([...nodes, newNode]);
 

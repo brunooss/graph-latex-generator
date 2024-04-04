@@ -42,6 +42,10 @@ export const GraphEditorPage: React.FC = () => {
         <Button variant="contained" onClick={() => navigate("./nova-pagina")}>
           Abrir a próxima tela
         </Button>
+        <p></p>
+        <Button variant="contained" onClick={() => navigate("./canvas-page")}>
+          Canvas aqui
+        </Button>
       </div>
     </>
   );
