@@ -1,51 +1,55 @@
-import {useEffect, useState} from "react";
-import './Node.css'; // Import CSS for styling (optional)
+import React, { useState, useEffect } from "react";
 
-export default function node(){
-    const [isDraggin, setisDrgaggin] = useState(false);
-    const [position, setPosition] = useState({x:0, y:0});
+type NodeProps = {
+    x: number;
+    y: number;
+};
+export const Node: React.FC<NodeProps> = ({ x : initialX, y : initialY }) => {
+    const [isDragging, setIsDragging] = useState(false);
     const [offset, setOffset] = useState({x:0, y:0});
+    const [x, setX] = useState(initialX);
+    const [y, setY] = useState(initialY);
 
-    
     useEffect(() => {
-        const handleMouseMove = (event : any) => {
-          if (isDraggin) {
-            setPosition({
-              x: event.clientX - offset.x,
-              y: event.clientY - offset.y
-            });
-          }
+        const handleMouseMove = (event : MouseEvent) => {
+            if(isDragging){
+                setX(event.clientX - offset.x);
+                setY(event.clientY - offset.y);
+            }
         };
-    
+
         const handleMouseUp = () => {
-          if (isDraggin) {
-            setisDrgaggin(false);
-          }
+            if(isDragging){
+                setIsDragging(false);
+            }
         };
-    
+
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
-    
+
         return () => {
-          document.removeEventListener("mousemove", handleMouseMove);
-          document.removeEventListener("mouseup", handleMouseUp);
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
         };
-      }, [isDraggin, offset]);
-    
-      const handleMouseDown = (event : any) => {
-        setisDrgaggin(true);
+    }, [isDragging, offset]);
+
+    const handleMouseDown = (event : React.MouseEvent<SVGElement>) => {
+        setIsDragging(true);
         setOffset({
-          x: event.clientX - position.x,
-          y: event.clientY - position.y
+            x: event.clientX - x,
+            y: event.clientY - y 
         });
-      };
-    
+    };
 
     return (
-        <div 
-        className="node"
-        style = {{top : position.y, left: position.x}}
-        onMouseDown={handleMouseDown}
+        <circle 
+            cx={x} 
+            cy={y}
+            r={25}
+            fill={'white'}
+            stroke={'black'}
+            strokeWidth={2.5}
+            onMouseDown={handleMouseDown}
         />
     );
-}
+};

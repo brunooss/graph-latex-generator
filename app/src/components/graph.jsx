@@ -1,6 +1,7 @@
 import React from 'react'
 import Graph from 'react-vis-network-graph'
 
+// Pode deletar esse arquivo??
 export default function GraphView() {
     const graph = {
         nodes: [

@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-
-export const GraphEditorPage: React.FC = () => {
+export const MenuPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [count, setCount] = useState(0);
@@ -39,12 +38,8 @@ export const GraphEditorPage: React.FC = () => {
         </p>
       </div>
       <div className="card">
-        <Button variant="contained" onClick={() => navigate("./nova-pagina")}>
-          Abrir a próxima tela
-        </Button>
-        <p></p>
-        <Button variant="contained" onClick={() => navigate("./canvas-page")}>
-          Canvas aqui
+        <Button variant="contained" onClick={() => navigate("./editor-page")}>
+          Abrir editor
         </Button>
       </div>
     </>
