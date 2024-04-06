@@ -7,6 +7,7 @@ import "./EditorPage.css"
 import {Button} from '../components/Button'
 import { NextWeek } from "@mui/icons-material";
 
+
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
   const [circles, setCircles] = useState<{x:number; y:number}[]>([
@@ -21,13 +22,6 @@ export const EditorPage: React.FC = () => {
     setLastX(lastX+60);
   };
 
-  const [showPopup, setShowPopup] = useState(false);
-  const handleShowPopup = () =>{
-      setShowPopup(true);
-  };
-  const handleClosePopup = () =>{
-      setShowPopup(false);
-  };
 
   const [isDragging1, setIsDragging1] = useState(false);
   const [edgeOffset1, setEdgeOffset1] = useState({ x: 0, y: 0 });
