@@ -7,6 +7,7 @@ import "./EditorPage.css"
 import {Button} from '../components/Button'
 import { NextWeek } from "@mui/icons-material";
 
+
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
   const [circles, setCircles] = useState<{x:number; y:number}[]>([
