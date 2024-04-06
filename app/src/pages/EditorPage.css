@@ -1,0 +1,5 @@
+.button-container {
+    display: flex;
+    justify-content: center; /* Isso alinha os itens horizontalmente no centro */
+    gap: 10px; /* Isso adiciona um espaço entre os botões */
+  }

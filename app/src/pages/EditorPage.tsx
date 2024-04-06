@@ -1,9 +1,10 @@
-import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { Node } from "../components/Node"
 import { Edge } from "../components/Edge"
-import { LatexPopup } from "../components/LatexPopup";
+import LatexPopup  from "../components/LatexPopup"
+import "./EditorPage.css"
+import {Button} from '../components/Button'
 import { NextWeek } from "@mui/icons-material";
 
 export const EditorPage: React.FC = () => {
@@ -113,15 +114,12 @@ export const EditorPage: React.FC = () => {
         ))}
 
       </svg>
-      <LatexPopup show={showPopup} onClose={handleClosePopup}/>
       <div className="button-container">
-        <Button variant="contained" onClick={addCircle}>
+        <Button onClick={addCircle}>
           Add Circle
         </Button>
-        <Button variant="contained" onClick={handleShowPopup}>
-          Gerar Latex
-        </Button>
-        <Button variant="contained" onClick={() => navigate("../")}>
+        <LatexPopup />
+        <Button onClick={() => navigate("../")}>
           Voltar para a tela anterior
         </Button>
       </div>
