@@ -5,7 +5,6 @@ import { Edge } from "../components/Edge";
 import LatexPopup from "../components/LatexPopup";
 import "./EditorPage.css";
 import { Button } from "../components/Button";
-import { NextWeek } from "@mui/icons-material";
 
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +21,13 @@ export const EditorPage: React.FC = () => {
     { x: 450, y: 300, isDragging: false, edgeOffsetX: 0, edgeOffsetY: 0 },
   ]);
   const [lastX, setLastX] = useState(0);
+
+  const [creatingLine, setCreatingLine] = React.useState(false);
+  const [newLine, setNewLine] = React.useState<{
+    originNodeIndex: number;
+    x: number;
+    y: number;
+  }>();
 
   const addCircle = () => {
     const newCircles = [
@@ -54,37 +60,38 @@ export const EditorPage: React.FC = () => {
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      const updatedCircles = circles;
+      if (!creatingLine) {
+        const updatedCircles = circles;
 
-      for (let i = 0; i < circles.length; i++) {
-        const circle = updatedCircles[i];
+        for (let i = 0; i < circles.length; i++) {
+          const circle = updatedCircles[i];
 
-        if (circle.isDragging) {
-          let updatedCircle = {
-            ...circle,
-            isDragging: true,
+          if (circle.isDragging) {
+            let updatedCircle = {
+              ...circle,
+              isDragging: true,
+              x: event.clientX - circle.edgeOffsetX,
+              y: event.clientY - circle.edgeOffsetY,
+            };
+
+            updatedCircles[i] = updatedCircle;
+          }
+        }
+
+        setCircles([...updatedCircles]);
+      } else {
+        setNewLine((currentNewLine) => {
+          if (!currentNewLine) return;
+
+          const circle = circles[currentNewLine.originNodeIndex];
+
+          return {
+            ...currentNewLine,
             x: event.clientX - circle.edgeOffsetX,
             y: event.clientY - circle.edgeOffsetY,
           };
-
-          updatedCircles[i] = updatedCircle;
-        }
+        });
       }
-
-      setCircles([...updatedCircles]);
-
-      // if (isDragging1) {
-      //   setEndpoint1({
-      //     x: event.clientX - edgeOffset1.x,
-      //     y: event.clientY - edgeOffset1.y,
-      //   });
-      // }
-      // if (isDragging2) {
-      //   setEndpoint2({
-      //     x: event.clientX - edgeOffset2.x,
-      //     y: event.clientY - edgeOffset2.y,
-      //   });
-      // }
     };
 
     const handleMouseUp = () => {
@@ -129,6 +136,22 @@ export const EditorPage: React.FC = () => {
     setCircles(updatedCircles);
   };
 
+  const handleNewLineMoved = (newX: number, newY: number, idx: number) => {
+    let currentCircle = circles[idx];
+
+    const movingCircle = {
+      ...currentCircle,
+      edgeOffsetX: -currentCircle.x + newX,
+      edgeOffsetY: -currentCircle.y + newY,
+    };
+
+    const updatedCircles = circles;
+
+    updatedCircles[idx] = movingCircle;
+
+    setCircles(updatedCircles);
+  };
+
   return (
     <div>
       <svg
@@ -149,9 +172,23 @@ export const EditorPage: React.FC = () => {
             idx={index}
             x={circle.x}
             y={circle.y}
-            onMoved={handleNodeMoved}
+            onMoved={creatingLine ? handleNewLineMoved : handleNodeMoved}
+            adjacents={[] /* TODO: Adicionar adjacências dinamicamente */}
+            onRightClick={() => {
+              setCreatingLine((creatingLine) => !creatingLine);
+              setNewLine({ originNodeIndex: index, x: circle.x, y: circle.y });
+            }}
           />
         ))}
+
+        {creatingLine && newLine && (
+          <Edge
+            x1={circles[newLine.originNodeIndex].x}
+            y1={circles[newLine.originNodeIndex].y}
+            x2={newLine.x}
+            y2={newLine.y}
+          />
+        )}
       </svg>
       <div className="button-container">
         <Button onClick={addCircle}>Add Circle</Button>
