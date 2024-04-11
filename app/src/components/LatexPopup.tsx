@@ -2,9 +2,27 @@ import * as React from 'react';
 import { Unstable_Popup as BasePopup, PopupPlacement } from '@mui/base/Unstable_Popup';
 import { styled } from '@mui/system';
 import {Button} from './Button'
-export default function LatexPopup() {
+
+interface Circle {
+  x : number;
+  y : number;
+  isDragging: boolean;
+  edgeOffsetX: number;
+  edgeOffsetY: number;
+}
+
+interface LatexPopupProps{
+  data_circles: Circle[];
+}
+
+export const LatexPopup : React.FC<LatexPopupProps> = ({
+  data_circles
+  // precisamos de passar as arestas aqui também
+  }) => {
+
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
   const [placement] = React.useState<PopupPlacement>('top');
+  const [text, setText] = React.useState<string>('');
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : event.currentTarget);
@@ -13,13 +31,49 @@ export default function LatexPopup() {
   const open = Boolean(anchor);
   const id = open ? 'simple-popper' : undefined;
 
+  const generateLatex = () => {
+      let res = '';
+      res += '% Include libraries?\n'
+      res += '\n'
+
+      res += '% Scale image if necessary\n'
+      res += '\\def \\scale_factor {1.5}\n';
+      res += '\\begin{tikzpicture}[scale=\\scale_factor, every node/.style={scale=\\scale_factor}]\n';
+      res += '\n'
+
+      res += '\t% Styles definition\n';
+      res += '\t\\tikzstyle{every node}=[font=\\small]\n';
+      res += '\t\\tikzstyle{vert} = [circle, minimum width=5pt, fill, inner sep=0pt]\n';
+      res += '\n'
+
+      res += '\t% Declaring vertices\n';
+      data_circles.forEach((circle, index) => {
+        res += `\t\\node[vert] (${index+1}) at (${circle.x},${circle.y}) {}\n`;
+      });
+      res += '\n'
+
+      res += '\t% Declaring edges\n';
+      // TODO : adicionar arestas. Para isso, precisamos de uma lista de arestas. Cada elemento da lista precisa somente de duas informações: 
+      // os índices dos vértices incidentes na aresta. Ou seja, se a aresta é entre o vértice 1 e 3, então ela aparece na lista como [ 1, 3 ].
+
+      res += '\\end{tikzpicture}\n' 
+
+      return res;
+  };
+
+  React.useEffect(() => {
+    if(anchor){
+      setText(generateLatex());
+    }
+  }, [anchor]);
+
   return (
     <div>
       <Button aria-describedby={id} type="button" onClick={handleClick}>
         Gerar Latex
       </Button>
       <BasePopup id={id} open={open} anchor={anchor} placement={placement}>
-        <PopupBody>The content of the Popup.</PopupBody>
+        <PopupBody>{text}</PopupBody>
       </BasePopup>
     </div>
   );
@@ -54,6 +108,8 @@ const PopupBody = styled('div')(
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
   z-index: 1;
+  white-space: pre-wrap;
 `,
 );
 
+export default LatexPopup;

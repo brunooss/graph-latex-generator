@@ -20,6 +20,15 @@ export const EditorPage: React.FC = () => {
     { x: 150, y: 300, isDragging: false, edgeOffsetX: 0, edgeOffsetY: 0 },
     { x: 450, y: 300, isDragging: false, edgeOffsetX: 0, edgeOffsetY: 0 },
   ]);
+
+  // TODO: Criar um vetor para as linhas: deve conter apenas os índices dos círculos que incidem nelas!
+  // const [lines, setLines] = useState<
+  //    { 
+  //      i : Number;
+  //      j : Number;
+  //    }[] 
+  // >([]);
+
   const [lastX, setLastX] = useState(0);
 
   const [creatingLine, setCreatingLine] = React.useState(false);
@@ -44,6 +53,7 @@ export const EditorPage: React.FC = () => {
     setLastX(lastX + 60);
   };
 
+  // Por mim (thiago) pode apagar isso daqui!!, n sei se alguém vai usar, mas eu não :D
   // const [isDragging1, setIsDragging1] = useState(false);
   // const [edgeOffset1, setEdgeOffset1] = useState({ x: 0, y: 0 });
   // const [endpoint1, setEndpoint1] = useState({
@@ -192,7 +202,7 @@ export const EditorPage: React.FC = () => {
       </svg>
       <div className="button-container">
         <Button onClick={addCircle}>Add Circle</Button>
-        <LatexPopup />
+        <LatexPopup data_circles={circles}/>
         <Button onClick={() => navigate("../")}>
           Voltar para a tela anterior
         </Button>
