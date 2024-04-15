@@ -78,10 +78,29 @@ export const EditorPage: React.FC = () => {
     */
   };
 
+<<<<<<< Updated upstream
   const [ nodeList, setNodeList ] = useState<NodeProps[]>([]);
   const handleInsertNode = (newNode : NodeProps) => {
     const newList = [...nodeList, newNode];
     setNodeList(newList);
+=======
+  const handleNodeClick = (event : MouseEvent) =>{
+    if(event.ctrlKey){
+      if(event.button ===0){
+        const clickedNode = event.target as SVGElement;
+        if(clickedNode.classList.contains('selected')){
+          clickedNode.classList.remove('selected');
+        }
+        else{
+          clickedNode.classList.add('selected');
+        }
+        const selectedNodes = document.querySelectorAll('.selectd');
+        console.log(selectedNodes);
+        selectedNodes.forEach(node => node.classList.remove('selected'));
+
+      }
+    }
+>>>>>>> Stashed changes
   }
 
   return (
