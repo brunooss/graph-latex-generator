@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-type NodeProps = {
+export type NodeProps = {
     idx: number;
     x: number;
     y: number;
     onMoved: (newX : number, newY : number, idx : number) => void;
 };
+
 export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onMoved }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [offset, setOffset] = useState({x:0, y:0});

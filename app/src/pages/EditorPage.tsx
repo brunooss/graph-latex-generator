@@ -1,25 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Node } from "../components/Node"
+import { Node, NodeProps } from "../components/Node"
 import { Edge } from "../components/Edge"
 import LatexPopup  from "../components/LatexPopup"
 import "./EditorPage.css"
 import {Button} from '../components/Button'
-import { NextWeek } from "@mui/icons-material";
 
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
-  const [circles, setCircles] = useState<{x:number; y:number}[]>([
-    { x : 150, y: 300 },
-    { x : 450, y: 300 },
-  ]);
-  const [lastX, setLastX] = useState(0);
-
-  const addCircle = () => {
-    const newCircles = [...circles, { x: lastX+50, y: 50 }]; 
-    setCircles(newCircles);
-    setLastX(lastX+60);
-  };
 
   const [showPopup, setShowPopup] = useState(false);
   const handleShowPopup = () =>{
@@ -29,6 +17,7 @@ export const EditorPage: React.FC = () => {
       setShowPopup(false);
   };
 
+  /*
   const [isDragging1, setIsDragging1] = useState(false);
   const [edgeOffset1, setEdgeOffset1] = useState({ x: 0, y: 0 });
   const [endpoint1, setEndpoint1] = useState({
@@ -74,8 +63,10 @@ export const EditorPage: React.FC = () => {
           document.removeEventListener("mouseup", handleMouseUp);
       };
   }, [isDragging1, isDragging2]);
+  */
 
   const handleNodeMoved = (newX : number, newY: number, idx: number) => {
+    /*
     if(idx == 0){
       setIsDragging1(true);
       setEdgeOffset1({
@@ -90,7 +81,14 @@ export const EditorPage: React.FC = () => {
         y: -endpoint2.y + newY,
       });
     }
+    */
   };
+
+  const [ nodeList, setNodeList ] = useState<NodeProps[]>([]);
+  const handleInsertNode = (newNode : NodeProps) => {
+    const newList = [...nodeList, newNode];
+    setNodeList(newList);
+  }
 
   return (
     <div>
@@ -102,21 +100,19 @@ export const EditorPage: React.FC = () => {
           }} 
         >
 
-        <Edge 
-          x1={endpoint1.x}
-          y1={endpoint1.y}
-          x2={endpoint2.x}
-          y2={endpoint2.y}
-        />
-
-        {circles.map((circle, index) => (
-          <Node idx={index} x={circle.x} y={circle.y} onMoved={handleNodeMoved}/>
-        ))}
+      {nodeList.map((node, index) => (
+          <Node idx={index} x={node.x} y={node.y} onMoved={node.onMoved}/>
+      ))}
 
       </svg>
       <div className="button-container">
-        <Button onClick={addCircle}>
-          Add Circle
+        <Button onClick={() => handleInsertNode({
+          idx: 10,
+          x: 200,
+          y: 200,
+          onMoved: handleNodeMoved
+        })}>
+          New Add node
         </Button>
         <LatexPopup />
         <Button onClick={() => navigate("../")}>
