@@ -6,16 +6,10 @@ import LatexPopup  from "../components/LatexPopup"
 import "./EditorPage.css"
 import {Button} from '../components/Button'
 
+
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [showPopup, setShowPopup] = useState(false);
-  const handleShowPopup = () =>{
-      setShowPopup(true);
-  };
-  const handleClosePopup = () =>{
-      setShowPopup(false);
-  };
 
   /*
   const [isDragging1, setIsDragging1] = useState(false);
