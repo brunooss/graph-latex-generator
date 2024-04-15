@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Node, NodeProps } from "../components/Node"
+import { Node } from "../components/Node"
 import { Edge } from "../components/Edge"
 import LatexPopup  from "../components/LatexPopup"
 import "./EditorPage.css"
 import {Button} from '../components/Button'
 
+export type FakeNodeProps = {
+    idx: number;
+    x: number;
+    y: number;
+};
 
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
-
 
   /*
   const [isDragging1, setIsDragging1] = useState(false);
@@ -78,8 +82,11 @@ export const EditorPage: React.FC = () => {
     */
   };
 
-  const [ nodeList, setNodeList ] = useState<NodeProps[]>([]);
-  const handleInsertNode = (newNode : NodeProps) => {
+  const [ nodeList, setNodeList ] = useState<FakeNodeProps[]>([
+    { idx: 1, x: 100, y: 300 },
+    { idx: 2, x: 500, y: 300 },
+  ]);
+  const handleInsertNode = (newNode : FakeNodeProps) => {
     const newList = [...nodeList, newNode];
     setNodeList(newList);
   }
@@ -95,7 +102,7 @@ export const EditorPage: React.FC = () => {
         >
 
       {nodeList.map((node, index) => (
-          <Node idx={index} x={node.x} y={node.y} onMoved={node.onMoved}/>
+          <Node idx={index} x={node.x} y={node.y} onMoved={handleNodeMoved}/>
       ))}
 
       </svg>
@@ -104,7 +111,6 @@ export const EditorPage: React.FC = () => {
           idx: 10,
           x: 200,
           y: 200,
-          onMoved: handleNodeMoved
         })}>
           New Add node
         </Button>

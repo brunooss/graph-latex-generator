@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export type NodeProps = {
+type NodeProps = {
     idx: number;
     x: number;
     y: number;
