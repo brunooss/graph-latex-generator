@@ -91,6 +91,14 @@ export const EditorPage: React.FC = () => {
     setNodeList(newList);
   }
 
+  const handleNodeClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>, idx: number) => {
+    if (event.ctrlKey) {
+        if (event.button === 0) {
+            console.log('Node clicado:', idx);
+        }
+    }
+};
+
   return (
     <div>
       <svg
@@ -106,6 +114,8 @@ export const EditorPage: React.FC = () => {
       ))}
 
       </svg>
+
+
       <div className="button-container">
         <Button onClick={() => handleInsertNode({
           idx: 10,
