@@ -78,12 +78,6 @@ export const EditorPage: React.FC = () => {
     */
   };
 
-<<<<<<< Updated upstream
-  const [ nodeList, setNodeList ] = useState<NodeProps[]>([]);
-  const handleInsertNode = (newNode : NodeProps) => {
-    const newList = [...nodeList, newNode];
-    setNodeList(newList);
-=======
   const handleNodeClick = (event : MouseEvent) =>{
     if(event.ctrlKey){
       if(event.button ===0){
@@ -100,7 +94,6 @@ export const EditorPage: React.FC = () => {
 
       }
     }
->>>>>>> Stashed changes
   }
 
   return (
