@@ -91,7 +91,7 @@ export const EditorPage: React.FC = () => {
     setNodeList(newList);
   }
 
-  const handleNodeClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>, idx: number) => {
+  const handleNodeClick = (event: React.MouseEvent<SVGElement>, idx: number) => {
     if (event.ctrlKey) {
         if (event.button === 0) {
             console.log('Node clicado:', idx);
@@ -110,8 +110,9 @@ export const EditorPage: React.FC = () => {
         >
 
       {nodeList.map((node, index) => (
-          <Node idx={index} x={node.x} y={node.y} onMoved={handleNodeMoved}/>
-      ))}
+          <Node idx={index} x={node.x} y={node.y} onMoved={handleNodeMoved} 
+          onCtrlClick={(event) => handleNodeClick(event, node.idx)} 
+        ))}
 
       </svg>
 
