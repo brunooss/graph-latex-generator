@@ -1,94 +1,71 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Node } from "../components/Node"
-import { Edge } from "../components/Edge"
+import Edge, { EdgeRef } from "../components/Edge"
 import LatexPopup  from "../components/LatexPopup"
 import "./EditorPage.css"
 import {Button} from '../components/Button'
 
-export type FakeNodeProps = {
+// Aqui estão os parâmetros fakes que são usados nas listas
+type FakeNodeProps = {
     idx: number;
     x: number;
     y: number;
 };
+type FakeEdgeProps = {
+    i: number;
+    j: number;
+    edgeRef: React.MutableRefObject<EdgeRef>;
+};
 
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
-
-  /*
-  const [isDragging1, setIsDragging1] = useState(false);
-  const [edgeOffset1, setEdgeOffset1] = useState({ x: 0, y: 0 });
-  const [endpoint1, setEndpoint1] = useState({
-    x: circles[0].x, y : circles[0].y
-  });
-
-  const [isDragging2, setIsDragging2] = useState(false);
-  const [edgeOffset2, setEdgeOffset2] = useState({ x: 0, y: 0 });
-  const [endpoint2, setEndpoint2] = useState({
-    x: circles[1].x, y : circles[1].y
-  });
-
-  useEffect(() => {
-      const handleMouseMove = (event : MouseEvent) => {
-          if(isDragging1){
-              setEndpoint1({
-                x: event.clientX - edgeOffset1.x,
-                y: event.clientY - edgeOffset1.y,
-              });
-          }
-          if(isDragging2){
-              setEndpoint2({
-                x: event.clientX - edgeOffset2.x,
-                y: event.clientY - edgeOffset2.y,
-              });
-          }
-      };
-
-      const handleMouseUp = () => {
-          if(isDragging1){
-              setIsDragging1(false);
-          }
-          if(isDragging2){
-              setIsDragging2(false);
-          }
-      };
-
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-
-      return () => {
-          document.removeEventListener("mousemove", handleMouseMove);
-          document.removeEventListener("mouseup", handleMouseUp);
-      };
-  }, [isDragging1, isDragging2]);
-  */
-
-  const handleNodeMoved = (newX : number, newY: number, idx: number) => {
-    /*
-    if(idx == 0){
-      setIsDragging1(true);
-      setEdgeOffset1({
-        x: -endpoint1.x + newX,
-        y: -endpoint1.y + newY,
-      });
-    }
-    if(idx == 1){
-      setIsDragging2(true);
-      setEdgeOffset2({
-        x: -endpoint2.x + newX,
-        y: -endpoint2.y + newY,
-      });
-    }
-    */
-  };
-
   const [ nodeList, setNodeList ] = useState<FakeNodeProps[]>([
-    { idx: 1, x: 100, y: 300 },
-    { idx: 2, x: 500, y: 300 },
+    { idx: 0, x: 100, y: 300 },
+    { idx: 1, x: 500, y: 300 },
+    { idx: 2, x: 300, y: 100 },
   ]);
-  const handleInsertNode = (newNode : FakeNodeProps) => {
+  const [edgeList, setEdgeList ] = useState<FakeEdgeProps[]>([
+    { i: 0, j: 1, edgeRef: useRef<EdgeRef>({} as EdgeRef) },
+  ]);
+
+  // Criando um novo nó
+  const handleInsertNode = (idx : number) => {
+    const newNode: FakeNodeProps = {
+      idx : idx,
+      x : 50,
+      y : 50,
+    };
     const newList = [...nodeList, newNode];
     setNodeList(newList);
+  }
+  // Ao mover um nó
+  const handleNodeStartMoving = (newX : number, newY: number, idx: number) => {
+    edgeList.forEach(edge => {
+      if((edge.i == idx || edge.j == idx) && edge.edgeRef.current){
+        edge.edgeRef.current.callEdgeMove(idx, newX, newY);
+      }
+    })
+  };
+  // Atualiza as posição na lista de nós
+  const handleNodeFinishedMoving = (lastX : number, lastY: number, idx : number) =>{
+    const newList = nodeList;
+    newList[idx].x = lastX;
+    newList[idx].y = lastY;
+    setNodeList(newList);
+  };
+
+  // TEMOS QUE MUDAR AQUI! no momento, as Refs são substituídas quanto uma nova é criada: resultado é que as arestas param de ser movidas
+  // só é movida a última, que possui a Ref mais recente.
+  const myEdgeRef = useRef<EdgeRef>({} as EdgeRef);
+  const handleInsertEdge = (i : number, j : number) => {
+    const newEdge: FakeEdgeProps = {
+      i: i,
+      j: j,
+      edgeRef: myEdgeRef,
+    };
+    const newList = [...edgeList, newEdge];
+    setEdgeList(newList);
   }
 
   return (
@@ -101,18 +78,35 @@ export const EditorPage: React.FC = () => {
           }} 
         >
 
+      {edgeList.map((edge, index) => (
+        <Edge 
+          i={edge.i} 
+          j={edge.j} 
+          initialX1={nodeList[edge.i].x}
+          initialY1={nodeList[edge.i].y}
+          initialX2={nodeList[edge.j].x}
+          initialY2={nodeList[edge.j].y}
+          ref={edge.edgeRef}
+        />
+      ))}
+
       {nodeList.map((node, index) => (
-          <Node idx={index} x={node.x} y={node.y} onMoved={handleNodeMoved}/>
+          <Node 
+            idx={node.idx} 
+            x={node.x} 
+            y={node.y} 
+            onMoved={handleNodeStartMoving}
+            onFinishedMoving={handleNodeFinishedMoving}
+          />
       ))}
 
       </svg>
       <div className="button-container">
-        <Button onClick={() => handleInsertNode({
-          idx: 10,
-          x: 200,
-          y: 200,
-        })}>
-          New Add node
+        <Button onClick={() => handleInsertNode(nodeList.length)}>
+          Insert Node
+        </Button>
+        <Button onClick={() => handleInsertEdge(nodeList.length-1, nodeList.length-2)}>
+          Insert Edge
         </Button>
         <LatexPopup />
         <Button onClick={() => navigate("../")}>
