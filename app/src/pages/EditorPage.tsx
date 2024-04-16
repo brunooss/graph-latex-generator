@@ -138,8 +138,8 @@ export const EditorPage: React.FC = () => {
           Insert Edge
         </Button>
         <LatexPopup 
-          nodeData={nodeList.map(node => ({ idx: node.idx, x : node.x, y : node.y }))}
-          edgeData={edgeList.map(edge => ({ i: edge.i, j: edge.j }))}
+          nodeData={nodeList}
+          edgeData={edgeList}
         />
         <Button onClick={() => navigate("../")}>
           Voltar para a tela anterior

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Unstable_Popup as BasePopup, PopupPlacement } from '@mui/base/Unstable_Popup';
 import { styled } from '@mui/system';
 import {Button} from './Button'
+import { EdgeRef } from './Edge'
 
 interface NodeData {
   idx : number;
@@ -11,6 +12,7 @@ interface NodeData {
 interface EdgeData {
   i : number;
   j : number;
+  edgeRef: React.MutableRefObject<EdgeRef>;
 }
 interface LatexPopupProps{
   nodeData: NodeData[];
