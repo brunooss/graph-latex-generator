@@ -25,17 +25,8 @@ export const MenuPage: React.FC = () => {
           alt="Outro Grafo"
         />
       </div>
-      <h1>Gerador de Grafos com Exportação de Código LaTeX e .png</h1>
+      <h1>Gerador de Grafos com Exportação de Código LaTeX</h1>
       <div className="card">
-        <Button
-          variant="contained"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Gerar um grafo
-        </Button>
-        <p>
-          Agora temos {count} {count > 1 ? "grafos" : "grafo"}
-        </p>
       </div>
       <div className="card">
         <Button variant="contained" onClick={() => navigate("./editor-page")}>
