@@ -5,6 +5,7 @@ type NodeProps = {
     x: number;
     y: number;
     onMoved: (newX : number, newY : number, idx : number) => void;
+    onCtrlClick: (event: React.MouseEvent<SVGElement>, idx : number) => void;
     onFinishedMoving: (finalX : number, finalY : number, idx : number) => void;
 };
 
@@ -39,12 +40,17 @@ export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onM
     }, [isDragging, offset]);
 
     const handleMouseDown = (event : React.MouseEvent<SVGElement>) => {
-        setIsDragging(true);
-        setOffset({
-            x: event.clientX - x,
-            y: event.clientY - y 
-        });
-        onMoved(event.clientX, event.clientY, idx);
+        if (event.ctrlKey) {
+            onCtrlClick(event, idx);
+        }   
+        else{
+                setIsDragging(true);
+            setOffset({
+                x: event.clientX - x,
+                y: event.clientY - y 
+            });
+            onMoved(event.clientX, event.clientY, idx);
+    }
     };
 
     return (
