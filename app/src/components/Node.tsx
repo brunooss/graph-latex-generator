@@ -5,7 +5,7 @@ type NodeProps = {
     x: number;
     y: number;
     onMoved: (newX : number, newY : number, idx : number) => void;
-    onCtrlClick: (event: React.MouseEvent<SVGElement>, idx : number) => void;
+    onCtrlClick: (idx : number) => void;
     onFinishedMoving: (finalX : number, finalY : number, idx : number) => void;
 };
 
@@ -41,8 +41,7 @@ export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onM
 
     const handleMouseDown = (event : React.MouseEvent<SVGElement>) => {
         if (event.ctrlKey) {
-            // Isso daqui é da Laila
-            onCtrlClick(event, idx);
+            onCtrlClick(idx);
         }   
         else{
                 setIsDragging(true);

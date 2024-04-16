@@ -21,12 +21,14 @@ type FakeEdgeProps = {
 export const EditorPage: React.FC = () => {
   const navigate = useNavigate();
   const [ nodeList, setNodeList ] = useState<FakeNodeProps[]>([
-    { idx: 0, x: 100, y: 300 },
-    { idx: 1, x: 500, y: 300 },
-    { idx: 2, x: 300, y: 100 },
+    {idx: 0, x:500, y:300},
+    {idx: 1, x:361.803, y:109.789},
+    {idx: 2, x:138.197, y:182.443},
+    {idx: 3, x:138.197, y:417.557},
+    {idx: 4, x:361.803, y:490.211},
   ]);
   const [edgeList, setEdgeList ] = useState<FakeEdgeProps[]>([
-    { i: 0, j: 1, edgeRef: useRef<EdgeRef>({} as EdgeRef) },
+    //{ i: 0, j: 1, edgeRef: useRef<EdgeRef>({} as EdgeRef) },
   ]);
 
   // Criando um novo nó
@@ -58,13 +60,32 @@ export const EditorPage: React.FC = () => {
   // Isso daqui é utilizado para conseguir criar varias Refs para as arestas.
   const [numberOfEdges, setNumberOfEdges] = useState(1);
   const [edgeRefs, setEdgeRefs] = React.useState<React.MutableRefObject<EdgeRef>[]>([]);
+  // Fim
+
+
   React.useEffect(() => {
+    // Isso daqui atualiza as Refs
     setEdgeRefs((edgeRefs) =>
       Array(numberOfEdges)
         .fill(null)
         .map((_, i) => edgeRefs[i] || createRef<EdgeRef>()),
     );
-  }, [numberOfEdges]);
+    // Fim das refs
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "Control") {
+        // Remove the last added index from selectedNodes
+        setLastSelectedNode(-1);
+      }
+    };
+
+    document.body.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      document.body.removeEventListener("keyup", handleKeyUp);
+    };
+
+  }, [numberOfEdges ]);
 
   const handleInsertEdge = (i : number, j : number) => {
     // Proibe arestas múltiplas
@@ -85,16 +106,24 @@ export const EditorPage: React.FC = () => {
     setEdgeList(newList);
   }
 
-  const handleNodeCtrlClick = (event: React.MouseEvent<SVGElement>, idx: number) => {
-    if (event.ctrlKey) {
-        if (event.button === 0) {
-            console.log('Node clicado:', idx);
-        }
+  const [lastSelectedNode, setLastSelectedNode] = useState(-1);
+  // Ao clicar em um nó com Ctrl segurado
+  const handleNodeCtrlClick = (idx: number) => {
+    if(lastSelectedNode == -1){
+      setLastSelectedNode(idx);
+    }
+    else{
+      handleInsertEdge(lastSelectedNode, idx);
+      setLastSelectedNode(idx);
     }
   };
 
   return (
     <div>
+      <p>
+      Para adicionar uma aresta, segure Ctrl, e clique em 2 vértices.
+      </p>
+
       <svg
           width="600"
           height="600"
@@ -133,9 +162,6 @@ export const EditorPage: React.FC = () => {
       <div className="button-container">
         <Button onClick={() => handleInsertNode(nodeList.length)}>
           Insert Node
-        </Button>
-        <Button onClick={() => handleInsertEdge(nodeList.length-1, nodeList.length-2)}>
-          Insert Edge
         </Button>
         <LatexPopup 
           nodeData={nodeList}
