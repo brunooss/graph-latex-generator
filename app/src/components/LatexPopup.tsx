@@ -2,9 +2,26 @@ import * as React from 'react';
 import { Unstable_Popup as BasePopup, PopupPlacement } from '@mui/base/Unstable_Popup';
 import { styled } from '@mui/system';
 import {Button} from './Button'
-export default function LatexPopup() {
+
+interface NodeData {
+  idx : number;
+  x : number;
+  y : number;
+}
+interface EdgeData {
+  i : number;
+  j : number;
+}
+interface LatexPopupProps{
+  nodeData: NodeData[];
+  edgeData: EdgeData[];
+}
+
+export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) => {
+
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
   const [placement] = React.useState<PopupPlacement>('top');
+  const [text, setText] = React.useState<string>('');
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : event.currentTarget);
@@ -13,13 +30,51 @@ export default function LatexPopup() {
   const open = Boolean(anchor);
   const id = open ? 'simple-popper' : undefined;
 
+  const generateLatex = () => {
+      let res = '';
+      res += '% Include libraries?\n'
+      res += '\n'
+
+      res += '% Scale image if necessary\n'
+      res += '\\def \\scale_factor {1.5}\n';
+      res += '\\begin{tikzpicture}[scale=\\scale_factor, every node/.style={scale=\\scale_factor}]\n';
+      res += '\n'
+
+      res += '\t% Styles definition\n';
+      res += '\t\\tikzstyle{every node}=[font=\\small]\n';
+      res += '\t\\tikzstyle{vert} = [circle, minimum width=5pt, fill, inner sep=0pt]\n';
+      res += '\n'
+
+      res += '\t% Declaring nodes\n';
+      nodeData.forEach((node) => {
+        res += `\t\\node[vert] (${node.idx}) at (${node.x},${node.y}) {};\n`;
+      });
+      res += '\n'
+
+      res += '\t% Declaring edges\n';
+      edgeData.forEach((edge) =>{
+        res += `\t\\draw (${edge.i}) -- (${edge.j});\n`;
+      })
+      res += '\n'
+
+      res += '\\end{tikzpicture}\n' 
+
+      return res;
+  };
+
+  React.useEffect(() => {
+    if(anchor){
+      setText(generateLatex());
+    }
+  }, [anchor]);
+
   return (
     <div>
       <Button aria-describedby={id} type="button" onClick={handleClick}>
         Gerar Latex
       </Button>
       <BasePopup id={id} open={open} anchor={anchor} placement={placement}>
-        <PopupBody>The content of the Popup.</PopupBody>
+        <PopupBody>{text}</PopupBody>
       </BasePopup>
     </div>
   );
@@ -54,6 +109,8 @@ const PopupBody = styled('div')(
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
   z-index: 1;
+  white-space: pre-wrap;
 `,
 );
 
+export default LatexPopup;

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, createRef } from "react";
 import { Node } from "../components/Node"
 import Edge, { EdgeRef } from "../components/Edge"
 import LatexPopup  from "../components/LatexPopup"
@@ -42,7 +42,7 @@ export const EditorPage: React.FC = () => {
   // Ao mover um nó
   const handleNodeStartMoving = (newX : number, newY: number, idx: number) => {
     edgeList.forEach(edge => {
-      if((edge.i == idx || edge.j == idx) && edge.edgeRef.current){
+      if((edge.i == idx || edge.j == idx) && edge.edgeRef && edge.edgeRef.current){
         edge.edgeRef.current.callEdgeMove(idx, newX, newY);
       }
     })
@@ -55,14 +55,31 @@ export const EditorPage: React.FC = () => {
     setNodeList(newList);
   };
 
-  // TEMOS QUE MUDAR AQUI! no momento, as Refs são substituídas quanto uma nova é criada: resultado é que as arestas param de ser movidas
-  // só é movida a última, que possui a Ref mais recente.
-  const myEdgeRef = useRef<EdgeRef>({} as EdgeRef);
+  // Isso daqui é utilizado para conseguir criar varias Refs para as arestas.
+  const [numberOfEdges, setNumberOfEdges] = useState(1);
+  const [edgeRefs, setEdgeRefs] = React.useState<React.MutableRefObject<EdgeRef>[]>([]);
+  React.useEffect(() => {
+    setEdgeRefs((edgeRefs) =>
+      Array(numberOfEdges)
+        .fill(null)
+        .map((_, i) => edgeRefs[i] || createRef<EdgeRef>()),
+    );
+  }, [numberOfEdges]);
+
   const handleInsertEdge = (i : number, j : number) => {
+    // Proibe arestas múltiplas
+    for (const edge of edgeList) {
+      if((edge.i == i && edge.j == j) || (edge.i == j && edge.j == i)){
+        return;
+      }
+    }
+
+    // Adiciona uma nova aresta na lista
+    setNumberOfEdges(numberOfEdges+1); // aqui uma nova Ref é criada
     const newEdge: FakeEdgeProps = {
       i: i,
       j: j,
-      edgeRef: myEdgeRef,
+      edgeRef: edgeRefs[numberOfEdges-1]
     };
     const newList = [...edgeList, newEdge];
     setEdgeList(newList);
@@ -86,8 +103,9 @@ export const EditorPage: React.FC = () => {
           }} 
         >
 
-      {edgeList.map((edge, index) => (
+      {edgeList.map((edge) => (
         <Edge 
+          key={`${edge.i},${edge.j}`}
           i={edge.i} 
           j={edge.j} 
           initialX1={nodeList[edge.i].x}
@@ -98,8 +116,9 @@ export const EditorPage: React.FC = () => {
         />
       ))}
 
-      {nodeList.map((node, index) => (
+      {nodeList.map((node) => (
           <Node 
+            key={node.idx}
             idx={node.idx} 
             x={node.x} 
             y={node.y} 
@@ -118,7 +137,10 @@ export const EditorPage: React.FC = () => {
         <Button onClick={() => handleInsertEdge(nodeList.length-1, nodeList.length-2)}>
           Insert Edge
         </Button>
-        <LatexPopup />
+        <LatexPopup 
+          nodeData={nodeList.map(node => ({ idx: node.idx, x : node.x, y : node.y }))}
+          edgeData={edgeList.map(edge => ({ i: edge.i, j: edge.j }))}
+        />
         <Button onClick={() => navigate("../")}>
           Voltar para a tela anterior
         </Button>
