@@ -9,7 +9,7 @@ type NodeProps = {
     onFinishedMoving: (finalX : number, finalY : number, idx : number) => void;
 };
 
-export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onMoved, onFinishedMoving }) => {
+export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onMoved, onCtrlClick, onFinishedMoving }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [offset, setOffset] = useState({x:0, y:0});
     const [x, setX] = useState(initialX);
@@ -41,6 +41,7 @@ export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onM
 
     const handleMouseDown = (event : React.MouseEvent<SVGElement>) => {
         if (event.ctrlKey) {
+            // Isso daqui é da Laila
             onCtrlClick(event, idx);
         }   
         else{
