@@ -2,23 +2,24 @@ import * as React from 'react';
 import { Unstable_Popup as BasePopup, PopupPlacement } from '@mui/base/Unstable_Popup';
 import { styled } from '@mui/system';
 import {Button} from './Button'
+import { EdgeRef } from './Edge'
 
-interface Circle {
+interface NodeData {
+  idx : number;
   x : number;
   y : number;
-  isDragging: boolean;
-  edgeOffsetX: number;
-  edgeOffsetY: number;
 }
-
+interface EdgeData {
+  i : number;
+  j : number;
+  edgeRef: React.MutableRefObject<EdgeRef>;
+}
 interface LatexPopupProps{
-  data_circles: Circle[];
+  nodeData: NodeData[];
+  edgeData: EdgeData[];
 }
 
-export const LatexPopup : React.FC<LatexPopupProps> = ({
-  data_circles
-  // precisamos de passar as arestas aqui também
-  }) => {
+export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) => {
 
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
   const [placement] = React.useState<PopupPlacement>('top');
@@ -46,15 +47,17 @@ export const LatexPopup : React.FC<LatexPopupProps> = ({
       res += '\t\\tikzstyle{vert} = [circle, minimum width=5pt, fill, inner sep=0pt]\n';
       res += '\n'
 
-      res += '\t% Declaring vertices\n';
-      data_circles.forEach((circle, index) => {
-        res += `\t\\node[vert] (${index+1}) at (${circle.x},${circle.y}) {}\n`;
+      res += '\t% Declaring nodes\n';
+      nodeData.forEach((node) => {
+        res += `\t\\node[vert] (${node.idx}) at (${node.x},${node.y}) {};\n`;
       });
       res += '\n'
 
       res += '\t% Declaring edges\n';
-      // TODO : adicionar arestas. Para isso, precisamos de uma lista de arestas. Cada elemento da lista precisa somente de duas informações: 
-      // os índices dos vértices incidentes na aresta. Ou seja, se a aresta é entre o vértice 1 e 3, então ela aparece na lista como [ 1, 3 ].
+      edgeData.forEach((edge) =>{
+        res += `\t\\draw (${edge.i}) -- (${edge.j});\n`;
+      })
+      res += '\n'
 
       res += '\\end{tikzpicture}\n' 
 

@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
 
 type NodeProps = {
-  idx: number;
-  x: number;
-  y: number;
-  onMoved?: (newX: number, newY: number, idx: number) => void;
-  onRightClick?: () => void;
-  adjacents: number[];
+    idx: number;
+    x: number;
+    y: number;
+    onMoved: (newX : number, newY : number, idx : number) => void;
+    onCtrlClick: (idx : number) => void;
+    onFinishedMoving: (finalX : number, finalY : number, idx : number) => void;
 };
-export const Node: React.FC<NodeProps> = ({
-  idx,
-  x: initialX,
-  y: initialY,
-  onMoved,
-  onRightClick,
-  adjacents,
-}) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [x, setX] = useState(initialX);
-  const [y, setY] = useState(initialY);
+
+export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onMoved, onCtrlClick, onFinishedMoving }) => {
+    const [isDragging, setIsDragging] = useState(false);
+    const [offset, setOffset] = useState({x:0, y:0});
+    const [x, setX] = useState(initialX);
+    const [y, setY] = useState(initialY);
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -29,11 +23,12 @@ export const Node: React.FC<NodeProps> = ({
       }
     };
 
-    const handleMouseUp = () => {
-      if (isDragging) {
-        setIsDragging(false);
-      }
-    };
+        const handleMouseUp = (event : MouseEvent) => {
+            if(isDragging){
+                setIsDragging(false);
+                onFinishedMoving(event.clientX - offset.x, event.clientY - offset.y, idx);
+            }
+        };
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
@@ -44,23 +39,19 @@ export const Node: React.FC<NodeProps> = ({
     };
   }, [isDragging, offset]);
 
-  const handleMouseDown = (event: React.MouseEvent<SVGElement>) => {
-    // left click
-    if (event.nativeEvent.button === 0) {
-      setIsDragging(true);
-      setOffset({
-        x: event.clientX - x,
-        y: event.clientY - y,
-      });
-      onMoved && onMoved(event.clientX, event.clientY, idx);
+    const handleMouseDown = (event : React.MouseEvent<SVGElement>) => {
+        if (event.ctrlKey) {
+            onCtrlClick(idx);
+        }   
+        else{
+                setIsDragging(true);
+            setOffset({
+                x: event.clientX - x,
+                y: event.clientY - y 
+            });
+            onMoved(event.clientX, event.clientY, idx);
     }
-
-    // right click
-    if (event.nativeEvent.button === 1) {
-      event.preventDefault();
-      onRightClick && onRightClick();
-    }
-  };
+    };
 
   return (
     <circle
