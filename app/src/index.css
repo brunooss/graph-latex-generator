@@ -1,16 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Old+South+Arabian&family=Redacted+Script:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 * {
-  font-family: sans-serif !important; /* Muda isso kkkkkkkkkkk (a propósito, se quiser usar outra fonte, pega no google fonts e importa na linha 1!) */
+  font-family: 'Roboto', sans-serif !important; /* Altera a fonte para Roboto */
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Substituí a fonte padrão por Inter */
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: #ffffffde;
   background-color: #242424;
 
   font-synthesis: none;
@@ -22,7 +22,7 @@
 a {
   font-weight: 500;
   color: #646cff;
-  text-decoration: inherit;
+  text-decoration: none; /* Alterei para 'none' para evitar sublinhado nos links */
 }
 a:hover {
   color: #535bf2;
@@ -35,11 +35,14 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #373958;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: rgb(187, 177, 177);
+  font-weight: 600;
 }
 
 button {

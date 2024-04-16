@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import {Button} from "../components/Button";
 
 export const MenuPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const MenuPage: React.FC = () => {
       <div className="card">
       </div>
       <div className="card">
-        <Button variant="contained" onClick={() => navigate("./editor-page")}>
+        <Button onClick={() => navigate("./editor-page")}>
           Abrir editor
         </Button>
       </div>

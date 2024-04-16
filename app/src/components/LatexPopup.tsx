@@ -65,9 +65,17 @@ export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) =
   };
 
   React.useEffect(() => {
-    if(anchor){
-      setText(generateLatex());
-    }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (anchor && !anchor.contains(event.target as Node)) {
+        setAnchor(null);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+  
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [anchor]);
 
   return (
