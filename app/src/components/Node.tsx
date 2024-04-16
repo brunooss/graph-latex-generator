@@ -44,13 +44,13 @@ export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onM
             onCtrlClick(idx);
         }   
         else{
-                setIsDragging(true);
+            setIsDragging(true);
             setOffset({
                 x: event.clientX - x,
                 y: event.clientY - y 
             });
             onMoved(event.clientX, event.clientY, idx);
-    }
+        }
     };
 
   return (
@@ -66,14 +66,3 @@ export const Node: React.FC<NodeProps> = ({ idx, x : initialX, y : initialY, onM
     />
   );
 };
-
-// @trassis adicionei uma lista de adjacências em cada Node e tornei os atributos específicos do componente como opcionais
-//    (vamos mudar isso depois, às vezes fazer uma interface Node genérica passar ela no componente Node).
-// Fiz também esse simples grafo de exemplo para a função LaTeX. Talvez o editor esteja quebrado ao clicar com o botão do meio do mouse,
-//    nisso que estou trabalhando! 🚀
-export const graph: NodeProps[] = [
-  { idx: 0, x: 0, y: 1, adjacents: [3, 2, 1] },
-  { idx: 1, x: 1, y: 1, adjacents: [0, 3, 2] },
-  { idx: 2, x: 1, y: 0, adjacents: [1, 0, 3] },
-  { idx: 3, x: 0, y: 0, adjacents: [2, 1, 0] },
-];
