@@ -1,36 +1,42 @@
-import * as React from 'react';
-import { Unstable_Popup as BasePopup, PopupPlacement } from '@mui/base/Unstable_Popup';
-import { styled } from '@mui/system';
-import {Button} from './Button'
-import { EdgeRef } from './Edge'
+import * as React from "react";
+import {
+  Unstable_Popup as BasePopup,
+  PopupPlacement,
+} from "@mui/base/Unstable_Popup";
+import { styled } from "@mui/system";
+import { Button } from "./Button";
+import { EdgeRef } from "./Edge";
+import { Modal } from "./Modal";
 
 interface NodeData {
-  idx : number;
-  x : number;
-  y : number;
+  idx: number;
+  x: number;
+  y: number;
 }
 interface EdgeData {
-  i : number;
-  j : number;
+  i: number;
+  j: number;
   edgeRef: React.MutableRefObject<EdgeRef>;
 }
-interface LatexPopupProps{
+interface LatexPopupProps {
   nodeData: NodeData[];
   edgeData: EdgeData[];
 }
 
-export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) => {
-
+export const LatexPopup: React.FC<LatexPopupProps> = ({
+  nodeData,
+  edgeData,
+}) => {
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
-  const [placement] = React.useState<PopupPlacement>('top');
-  const [text, setText] = React.useState<string>('');
+  const [placement] = React.useState<PopupPlacement>("top");
+  const [text, setText] = React.useState<string>("");
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : event.currentTarget);
   };
 
   const open = Boolean(anchor);
-  const id = open ? 'simple-popper' : undefined;
+  const id = open ? "simple-popper" : undefined;
 
   const scale = 200;
 
@@ -58,19 +64,19 @@ export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) =
       });
       res += '\n'
 
-      res += '\t% Declaring edges\n';
-      edgeData.forEach((edge) =>{
-        res += `\t\\draw (${edge.i}) -- (${edge.j});\n`;
-      })
-      res += '\n'
+    res += "\t% Declaring edges\n";
+    edgeData.forEach((edge) => {
+      res += `\t\\draw (${edge.i}) -- (${edge.j});\n`;
+    });
+    res += "\n";
 
-      res += '\\end{tikzpicture}\n' 
+    res += "\\end{tikzpicture}\n";
 
-      return res;
+    return res;
   };
 
   React.useEffect(() => {
-    if(anchor){
+    if (anchor) {
       setText(generateLatex());
     }
   }, [anchor]);
@@ -80,38 +86,41 @@ export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) =
       <Button aria-describedby={id} type="button" onClick={handleClick}>
         Gerar Latex
       </Button>
-      <BasePopup id={id} open={open} anchor={anchor} placement={placement}>
-        <PopupBody>{text}</PopupBody>
-      </BasePopup>
+
+      <Modal
+        visible={!!anchor}
+        title="Código LaTeX"
+        onClose={() => setAnchor(null)}
+      >
+        {text}
+      </Modal>
     </div>
   );
-}
-
-const grey = {
-  50: '#F3F6F9',
-  100: '#E5EAF2',
-  200: '#DAE2ED',
-  300: '#C7D0DD',
-  400: '#B0B8C4',
-  500: '#9DA8B7',
-  600: '#6B7A90',
-  700: '#434D5B',
-  800: '#303740',
-  900: '#1C2025',
 };
 
-const PopupBody = styled('div')(
+const grey = {
+  50: "#F3F6F9",
+  100: "#E5EAF2",
+  200: "#DAE2ED",
+  300: "#C7D0DD",
+  400: "#B0B8C4",
+  500: "#9DA8B7",
+  600: "#6B7A90",
+  700: "#434D5B",
+  800: "#303740",
+  900: "#1C2025",
+};
+
+const PopupBody = styled("div")(
   ({ theme }) => `
   width: max-content;
   padding: 10px 10px;
   margin-left: 100px;
-  border-radius: 10px;
-  max-height: 650px; 
-  overflow-y: auto;
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border-radius: 6px;
+  border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
+  background-color: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
   box-shadow: ${
-    theme.palette.mode === 'dark'
+    theme.palette.mode === "dark"
       ? `0px 4px 8px rgb(0 0 0 / 0.7)`
       : `0px 4px 8px rgb(0 0 0 / 0.1)`
   };
@@ -119,7 +128,7 @@ const PopupBody = styled('div')(
   font-size: 0.875rem;
   z-index: 1;
   white-space: pre-wrap;
-`,
+`
 );
 
 export default LatexPopup;
