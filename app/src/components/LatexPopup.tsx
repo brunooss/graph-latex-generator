@@ -32,24 +32,29 @@ export const LatexPopup : React.FC<LatexPopupProps> = ({ nodeData, edgeData }) =
   const open = Boolean(anchor);
   const id = open ? 'simple-popper' : undefined;
 
+  const scale = 200;
+
   const generateLatex = () => {
       let res = '';
-      res += '% Include libraries?\n'
+      res += '% Include if not yet.\n'
+      res += '\\usepackage{tikz}\n'
       res += '\n'
 
       res += '% Scale image if necessary\n'
-      res += '\\def \\scale_factor {1.5}\n';
-      res += '\\begin{tikzpicture}[scale=\\scale_factor, every node/.style={scale=\\scale_factor}]\n';
+      res += '\\def \\scaleFactor {1.5}\n';
+      res += '\\begin{tikzpicture}[scale=\\scaleFactor, every node/.style={scale=\\scaleFactor}]\n';
       res += '\n'
 
       res += '\t% Styles definition\n';
+      res += '\t%\t To change vertex size, change the minimum widht parameter.\n';
       res += '\t\\tikzstyle{every node}=[font=\\small]\n';
-      res += '\t\\tikzstyle{vert} = [circle, minimum width=5pt, fill, inner sep=0pt]\n';
+      res += '\t\\tikzstyle{vert}  = [circle, minimum width=5pt, draw, inner sep=0pt]\n';
+      res += '\t\\tikzstyle{varvert} = [circle, minimum width=5pt, fill, inner sep=0pt]\n';
       res += '\n'
 
       res += '\t% Declaring nodes\n';
       nodeData.forEach((node) => {
-        res += `\t\\node[vert] (${node.idx}) at (${node.x},${node.y}) {};\n`;
+        res += `\t\\node[vert] (${node.idx}) at (${node.x/scale},${node.y/scale}) {};\n`;
       });
       res += '\n'
 
@@ -98,9 +103,11 @@ const grey = {
 const PopupBody = styled('div')(
   ({ theme }) => `
   width: max-content;
-  padding: 300px 300px;
+  padding: 10px 10px;
   margin-left: 100px;
-  border-radius: 6px;
+  border-radius: 10px;
+  max-height: 650px; 
+  overflow-y: auto;
   border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
   background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
   box-shadow: ${
