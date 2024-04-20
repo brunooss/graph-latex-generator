@@ -39,30 +39,33 @@ export const LatexPopup: React.FC<LatexPopupProps> = ({
   const id = open ? "simple-popper" : undefined;
 
   const scale = 200;
-
   const generateLatex = () => {
       let res = '';
-      res += '% Include if not yet.\n'
-      res += '\\usepackage{tikz}\n'
+      res += '% Include tikz if not yet.\n'
+      res += '% \\usepackage{tikz}\n'
       res += '\n'
 
-      res += '% Scale image if necessary\n'
-      res += '\\def \\scaleFactor {1.5}\n';
+      res += '% If you need to, you can scale the whole image or change\n';
+      res += '% the sizes of the nodes by changing the parameters bellow.\n'
+      res += '\\def \\scaleFactor {3}\n';
+      res += '\\def \\nodeSize {8}\n';
+      res += '\n';
+
+      res += '% Begin Graph\n';
       res += '\\begin{tikzpicture}[scale=\\scaleFactor, every node/.style={scale=\\scaleFactor}]\n';
-      res += '\n'
+      res += '\n';
 
       res += '\t% Styles definition\n';
-      res += '\t%\t To change vertex size, change the minimum widht parameter.\n';
       res += '\t\\tikzstyle{every node}=[font=\\small]\n';
-      res += '\t\\tikzstyle{vert}  = [circle, minimum width=5pt, draw, inner sep=0pt]\n';
-      res += '\t\\tikzstyle{varvert} = [circle, minimum width=5pt, fill, inner sep=0pt]\n';
-      res += '\n'
+      res += '\t\\tikzstyle{vert}  = [circle, minimum width=\\nodeSize, draw, inner sep=0pt]\n';
+      res += '\t\\tikzstyle{varvert} = [circle, minimum width=\\nodeSize, fill, inner sep=0pt]\n';
+      res += '\n';
 
       res += '\t% Declaring nodes\n';
       nodeData.forEach((node) => {
-        res += `\t\\node[vert] (${node.idx}) at (${node.x/scale},${node.y/scale}) {};\n`;
+        res += `\t\\node[vert] (${node.idx}) at (${(node.x/scale).toFixed(3)},${(node.y/scale).toFixed(3)}) {};\n`;
       });
-      res += '\n'
+      res += '\n';
 
     res += "\t% Declaring edges\n";
     edgeData.forEach((edge) => {
@@ -92,7 +95,8 @@ export const LatexPopup: React.FC<LatexPopupProps> = ({
         title="Código LaTeX"
         onClose={() => setAnchor(null)}
       >
-        {text}
+
+      <PopupBody> {text} </PopupBody>
       </Modal>
     </div>
   );
@@ -112,18 +116,8 @@ const grey = {
 };
 
 const PopupBody = styled("div")(
-  ({ theme }) => `
+  () => `
   width: max-content;
-  padding: 10px 10px;
-  margin-left: 100px;
-  border-radius: 6px;
-  border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-  background-color: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-  box-shadow: ${
-    theme.palette.mode === "dark"
-      ? `0px 4px 8px rgb(0 0 0 / 0.7)`
-      : `0px 4px 8px rgb(0 0 0 / 0.1)`
-  };
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
   z-index: 1;
