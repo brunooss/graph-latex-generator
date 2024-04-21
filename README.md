@@ -71,4 +71,4 @@ O sistema contará com uma interface web/mobile, que será desenvolvida com _Rea
     - Adicionar botão para exportar o código ou imagem .png [Bruno]
     - 
 
-    ![diagrama de classes](imagem.png)
+    ![diagrama de classes](https://github.com/brunooss/graph-latex-generator/blob/36110d100c0b0e7a96535465128736e5986d9f25/image.png?raw=true)
