@@ -42,7 +42,7 @@ export const EditorPage: React.FC = () => {
     const newNode: FakeNodeProps = {
       idx: idx,
       x: 50,
-      y: 50,
+      y: 250,
     };
     const newList = [...nodeList, newNode];
     setNodeList(newList);
@@ -147,9 +147,9 @@ export const EditorPage: React.FC = () => {
       edgeData={edgeList}
     >
       <div className="h-screen">
-        <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 text-sm py-3 sm:py-0">
+        <header className="absolute flex flex-wrap sm:justify-start sm:flex-nowrap z-[999900] w-full bg-blue-600 text-sm py-3 sm:py-0">
           <nav
-            className="relative max-w-[85rem] w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
+            className="relative max-w-[85rem] z-50 w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
             aria-label="Global"
           >
             <div className="flex items-center justify-between">
@@ -267,7 +267,7 @@ export const EditorPage: React.FC = () => {
           <div className="h-full max-w-[85rem] mx-auto">
             <div className="h-full grid grid-cols-3">
               <svg
-                className="h-screen absolute top-0 left-0 -z-10 w-full col-span-2"
+                className="h-screen absolute top-0 left-0 z-2 w-full col-span-2"
                 style={{
                   backgroundColor: "white",
                 }}
