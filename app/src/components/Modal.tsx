@@ -25,6 +25,18 @@ export const Modal: React.FC<{
   const open = Boolean(visible);
   const id = open ? "simple-popper" : undefined;
 
+  const textRef = React.useRef<HTMLDivElement>(null);
+
+  const copyToClipboard = React.useCallback(() => {
+    if (!textRef?.current) return;
+
+    // Copy the text inside the text field
+    navigator.clipboard.writeText(textRef.current.innerText);
+
+    // Alert the copied text
+    alert("O código LaTeX foi salvo com sucesso em sua área de transferência!");
+  }, [textRef]);
+
   const scale = 200;
   const generateLatex = () => {
     let res = "";
@@ -122,7 +134,7 @@ export const Modal: React.FC<{
                 </button>
               </div>
               <div className="p-4 overflow-y-auto">
-                <PopupBody> {text} </PopupBody>
+                <PopupBody ref={textRef}> {text} </PopupBody>
               </div>
               <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t 700">
                 <button
@@ -135,8 +147,9 @@ export const Modal: React.FC<{
                 <button
                   type="button"
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  onClick={copyToClipboard}
                 >
-                  Save changes
+                  Copiar para a Área de Transferência
                 </button>
               </div>
             </div>
