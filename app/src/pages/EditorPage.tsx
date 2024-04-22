@@ -2,13 +2,13 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, createRef } from "react";
 import { Node } from "../components/Node";
 import Edge, { EdgeRef } from "../components/Edge";
-import LatexPopup from "../components/LatexPopup";
 import "./EditorPage.css";
 import { Button } from "../components/Button";
 import { BsPerson } from "react-icons/bs";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase-config";
 import { VscLoading } from "react-icons/vsc";
+import { Modal } from "../components/Modal";
 
 // Aqui estão os parâmetros fakes que são usados nas listas
 type FakeNodeProps = {
@@ -27,11 +27,11 @@ export const EditorPage: React.FC = () => {
 
   const navigate = useNavigate();
   const [nodeList, setNodeList] = useState<FakeNodeProps[]>([
-    { idx: 0, x: 500, y: 300 },
-    { idx: 1, x: 361.803, y: 109.789 },
-    { idx: 2, x: 138.197, y: 182.443 },
-    { idx: 3, x: 138.197, y: 417.557 },
-    { idx: 4, x: 361.803, y: 490.211 },
+    { idx: 0, x: 500, y: 360 },
+    { idx: 1, x: 361.803, y: 169.789 },
+    { idx: 2, x: 138.197, y: 242.443 },
+    { idx: 3, x: 138.197, y: 477.557 },
+    { idx: 4, x: 361.803, y: 550.211 },
   ]);
   const [edgeList, setEdgeList] = useState<FakeEdgeProps[]>([
     //{ i: 0, j: 1, edgeRef: useRef<EdgeRef>({} as EdgeRef) },
@@ -131,8 +131,21 @@ export const EditorPage: React.FC = () => {
     }
   };
 
+  const [opened, setOpened] = React.useState(false);
+
+  const id = opened ? "simple-popper" : undefined;
+  const handleClick = () => {
+    setOpened(true);
+  };
+
   return (
-    <>
+    <Modal
+      visible={opened}
+      title="Código LaTeX"
+      onClose={() => setOpened(false)}
+      nodeData={nodeList}
+      edgeData={edgeList}
+    >
       <div className="h-screen">
         <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 text-sm py-3 sm:py-0">
           <nav
@@ -250,13 +263,13 @@ export const EditorPage: React.FC = () => {
             </div>
           </nav>
         </header>
-        <main id="content" className="h-full">
+        <main id="content" className="">
           <div className="h-full max-w-[85rem] mx-auto">
             <div className="h-full grid grid-cols-3">
               <svg
-                className="h-full w-full col-span-2"
+                className="h-screen absolute top-0 left-0 -z-10 w-full col-span-2"
                 style={{
-                  backgroundColor: "lightgray",
+                  backgroundColor: "white",
                 }}
               >
                 {edgeList.map((edge) => (
@@ -285,7 +298,7 @@ export const EditorPage: React.FC = () => {
                 ))}
               </svg>
 
-              <div className="flex flex-col p-4 m-4">
+              <div className="flex flex-col p-4 m-4 rounded-xl bg-gray-200 absolute md:top-24 lg:top-24 lg:right-2 ">
                 <p>
                   Para adicionar uma aresta, segure Ctrl, e clique em 2
                   vértices.
@@ -294,7 +307,13 @@ export const EditorPage: React.FC = () => {
                   <Button onClick={() => handleInsertNode(nodeList.length)}>
                     Insert Node
                   </Button>
-                  <LatexPopup nodeData={nodeList} edgeData={edgeList} />
+                  <Button
+                    aria-describedby={id}
+                    type="button"
+                    onClick={handleClick}
+                  >
+                    Gerar Latex
+                  </Button>
                   <Button onClick={() => navigate("../")}>
                     Voltar para a tela anterior
                   </Button>
@@ -304,6 +323,6 @@ export const EditorPage: React.FC = () => {
           </div>
         </main>
       </div>
-    </>
+    </Modal>
   );
 };
