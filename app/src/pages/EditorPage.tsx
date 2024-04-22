@@ -103,8 +103,14 @@ export const EditorPage: React.FC = () => {
 
   const handleInsertEdge = (i: number, j: number) => {
     // Proibe arestas múltiplas
-    for (const edge of edgeList) {
+
+    for (let i = 0; i < edgeList.length; i++) {
+      const edge = edgeList[i];
+
       if ((edge.i == i && edge.j == j) || (edge.i == j && edge.j == i)) {
+        const newList = edgeList.splice(i, 1);
+        setEdgeList([...newList]);
+
         return;
       }
     }
