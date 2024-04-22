@@ -138,16 +138,71 @@ export const EditorPage: React.FC = () => {
     setOpened(true);
   };
 
+  const svgRef = React.useRef<SVGSVGElement>(null);
+
+  const generateImage = React.useCallback(() => {
+    if (!svgRef.current) return;
+
+    function triggerDownload(imgURI: string) {
+      const a = document.createElement("a");
+      a.download = "grafo.png";
+      a.target = "_blank";
+      a.href = imgURI;
+
+      // trigger download button
+      // (set `bubbles` to false here.
+      // or just `a.click()` if you don't care about bubbling)
+      a.dispatchEvent(
+        new MouseEvent("click", {
+          view: window,
+          bubbles: false,
+          cancelable: true,
+        })
+      );
+    }
+
+    const svgNode = svgRef.current;
+
+    const svgString = new XMLSerializer().serializeToString(svgNode as Node);
+    const svgBlob = new Blob([svgString], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+
+    const DOMURL = window.URL || window.webkitURL || window;
+    const url = DOMURL.createObjectURL(svgBlob);
+
+    const image = new Image();
+    image.width = svgNode.width.baseVal.value;
+    image.height = svgNode.height.baseVal.value;
+    image.src = url;
+    image.onload = function () {
+      const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+      canvas!.width = image.width;
+      canvas!.height = image.height;
+
+      const ctx = canvas!.getContext("2d");
+      ctx?.drawImage(image, 0, 0);
+      DOMURL.revokeObjectURL(url);
+
+      const imgURI = canvas!
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+      triggerDownload(imgURI);
+    };
+  }, [svgRef]);
+
   return (
     <Modal
       visible={opened}
       title="Código LaTeX"
+      onGenerateImage={() => generateImage()}
       onClose={() => setOpened(false)}
       nodeData={nodeList}
       edgeData={edgeList}
     >
+      <canvas id="canvas" className="hidden"></canvas>
       <div className="h-screen">
-        <header className="absolute flex flex-wrap sm:justify-start sm:flex-nowrap z-[999900] w-full bg-blue-600 text-sm py-3 sm:py-0">
+        <header className="absolute flex flex-wrap sm:justify-start sm:flex-nowrap z-[100] w-full bg-blue-600 text-sm py-3 sm:py-0">
           <nav
             className="relative max-w-[85rem] z-50 w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
             aria-label="Global"
@@ -267,6 +322,7 @@ export const EditorPage: React.FC = () => {
           <div className="h-full max-w-[85rem] mx-auto">
             <div className="h-full grid grid-cols-3">
               <svg
+                ref={svgRef}
                 className="h-screen absolute top-0 left-0 z-2 w-full col-span-2"
                 style={{
                   backgroundColor: "white",
@@ -312,7 +368,7 @@ export const EditorPage: React.FC = () => {
                     type="button"
                     onClick={handleClick}
                   >
-                    Gerar Latex
+                    Exportar Grafo
                   </Button>
                   <Button onClick={() => navigate("../")}>
                     Voltar para a tela anterior

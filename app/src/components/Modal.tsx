@@ -19,8 +19,17 @@ export const Modal: React.FC<{
   children: React.ReactNode;
   nodeData: NodeData[];
   edgeData: EdgeData[];
+  onGenerateImage: () => void;
   onClose: () => void;
-}> = ({ visible, title, children, onClose, nodeData, edgeData }) => {
+}> = ({
+  visible,
+  title,
+  children,
+  onClose,
+  onGenerateImage,
+  nodeData,
+  edgeData,
+}) => {
   const [text, setText] = React.useState<string>("");
   const open = Boolean(visible);
   const id = open ? "simple-popper" : undefined;
@@ -101,10 +110,10 @@ export const Modal: React.FC<{
   return (
     <div className="h-screen w-screen absolute top-0 left-0 bottom-0 right-0">
       {visible && (
-        <div className="absolute top-0 left-0 z-40 h-full w-full bg-gray-500 opacity-70"></div>
+        <div className="absolute top-0 left-0 z-[200] h-full w-full bg-gray-500 opacity-70"></div>
       )}
       {visible && (
-        <div className="size-full fixed top-0 start-0 z-[80] overflow-x-hidden transition-all overflow-y-auto pointer-events-none">
+        <div className="size-full fixed top-0 start-0 z-[300] overflow-x-hidden transition-all overflow-y-auto pointer-events-none">
           <div className="sm:max-w-lg sm:w-full m-3 sm:mx-auto">
             <div className="flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto">
               <div className="flex justify-between items-center py-3 px-4 border-b">
@@ -143,6 +152,13 @@ export const Modal: React.FC<{
                   data-hs-overlay="#hs-basic-modal"
                 >
                   Close
+                </button>
+                <button
+                  type="button"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  onClick={onGenerateImage}
+                >
+                  Gerar Imagem
                 </button>
                 <button
                   type="button"
