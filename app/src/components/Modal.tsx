@@ -46,24 +46,24 @@ export const Modal: React.FC<{
     alert("O código LaTeX foi salvo com sucesso em sua área de transferência!");
   }, [textRef]);
 
-  const scale = 200;
+  const scale = 300;
   const generateLatex = () => {
     let res = "";
     res += "% Include tikz if not yet.\n";
     res += "% \\usepackage{tikz}\n";
     res += "\n";
-
+  
     res += "% If you need to, you can scale the whole image or change\n";
     res += "% the sizes of the nodes by changing the parameters bellow.\n";
     res += "\\def \\scaleFactor {3}\n";
     res += "\\def \\nodeSize {8}\n";
     res += "\n";
-
+  
     res += "% Begin Graph\n";
     res +=
       "\\begin{tikzpicture}[scale=\\scaleFactor, every node/.style={scale=\\scaleFactor}]\n";
     res += "\n";
-
+  
     res += "\t% Styles definition\n";
     res += "\t\\tikzstyle{every node}=[font=\\small]\n";
     res +=
@@ -71,23 +71,22 @@ export const Modal: React.FC<{
     res +=
       "\t\\tikzstyle{varvert} = [circle, minimum width=\\nodeSize, fill, inner sep=0pt]\n";
     res += "\n";
-
+  
     res += "\t% Declaring nodes\n";
     nodeData.forEach((node) => {
-      res += `\t\\node[vert] (${node.idx}) at (${(node.x / scale).toFixed(
-        3
-      )},${(node.y / scale).toFixed(3)}) {};\n`;
+      // Inverte o sinal da coordenada Y
+      res += `\t\\node[vert] (${node.idx}) at (${(node.x / scale).toFixed(3)},${(-(node.y / scale)).toFixed(3)}) {};\n`;
     });
     res += "\n";
-
+  
     res += "\t% Declaring edges\n";
     edgeData.forEach((edge) => {
       res += `\t\\draw (${edge.i}) -- (${edge.j});\n`;
     });
     res += "\n";
-
+  
     res += "\\end{tikzpicture}\n";
-
+  
     return res;
   };
 
