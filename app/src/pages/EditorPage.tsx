@@ -39,15 +39,30 @@ export const EditorPage: React.FC = () => {
     //{ i: 0, j: 1, edgeRef: useRef<EdgeRef>({} as EdgeRef) },
   ]);
 
-  // Criando um novo nó
+  // insere um no
   const handleInsertNode = (idx: number) => {
-    const newNode: FakeNodeProps = {
-      idx: idx,
-      x: 50,
-      y: 250,
-    };
-    const newList = [...nodeList, newNode];
-    setNodeList(newList);
+    if (nodeList.length > 0) {
+      const lastNode = nodeList[nodeList.length - 1];
+
+      const newX = lastNode.x + 10;
+      const newY = lastNode.y + 10;
+      const newNode: FakeNodeProps = {
+        idx: idx,
+        x: newX,
+        y: newY,
+      };
+      const newList = [...nodeList, newNode];
+      setNodeList(newList);
+    } else {
+      const newNode: FakeNodeProps = {
+        idx: idx,
+        x: 50,
+        y: 250,
+      };
+      // Adiciona o novo nó à lista
+      const newList = [...nodeList, newNode];
+      setNodeList(newList);
+    }
   };
   // Ao mover um nó
   const handleNodeStartMoving = (newX: number, newY: number, idx: number) => {
@@ -105,20 +120,18 @@ export const EditorPage: React.FC = () => {
 
   const handleInsertEdge = (i: number, j: number) => {
     // Proibe arestas múltiplas
-
-    for (let i = 0; i < edgeList.length; i++) {
-      const edge = edgeList[i];
-
+    for (let k = 0; k < edgeList.length; k++) {
+      const edge = edgeList[k];
+  
       if ((edge.i == i && edge.j == j) || (edge.i == j && edge.j == i)) {
-        const newList = edgeList.splice(i, 1);
-        setEdgeList([...newList]);
-
+        const newList = [...edgeList.slice(0, k), ...edgeList.slice(k + 1)];
+        setEdgeList(newList);
         return;
       }
     }
-
+  
     // Adiciona uma nova aresta na lista
-    setNumberOfEdges(numberOfEdges + 1); // aqui uma nova Ref é criada
+    setNumberOfEdges(numberOfEdges + 1);
     const newEdge: FakeEdgeProps = {
       i: i,
       j: j,
@@ -232,11 +245,6 @@ export const EditorPage: React.FC = () => {
     if (graph?.nodeList) setNodeList(graph.nodeList);
     else {
       setNodeList([
-        { idx: 0, x: 500, y: 360 },
-        { idx: 1, x: 361.803, y: 169.789 },
-        { idx: 2, x: 138.197, y: 242.443 },
-        { idx: 3, x: 138.197, y: 477.557 },
-        { idx: 4, x: 361.803, y: 550.211 },
       ]);
     }
     if (graph?.nodeList && graph?.edgeList) {
