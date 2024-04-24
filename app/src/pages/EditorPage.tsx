@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, createRef } from "react";
 import { Node } from "../components/Node";
 import Edge, { EdgeRef } from "../components/Edge";
@@ -6,9 +6,12 @@ import "./EditorPage.css";
 import { Button } from "../components/Button";
 import { BsPerson } from "react-icons/bs";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase-config";
+import { auth, db } from "../firebase-config";
 import { VscLoading } from "react-icons/vsc";
 import { Modal } from "../components/Modal";
+import { ref, set, update } from "firebase/database";
+import { useObject } from "react-firebase-hooks/database";
+import { isEqual } from "lodash";
 
 // Aqui estão os parâmetros fakes que são usados nas listas
 type FakeNodeProps = {
@@ -23,16 +26,15 @@ type FakeEdgeProps = {
 };
 
 export const EditorPage: React.FC = () => {
+  const { graphId } = useParams();
+  const currentGraphId = React.useMemo(() => {
+    return graphId ?? crypto.randomUUID();
+  }, [graphId]);
+
   const [authState, loadingAuthState, errorAuthState] = useAuthState(auth);
 
   const navigate = useNavigate();
-  const [nodeList, setNodeList] = useState<FakeNodeProps[]>([
-    { idx: 0, x: 500, y: 360 },
-    { idx: 1, x: 361.803, y: 169.789 },
-    { idx: 2, x: 138.197, y: 242.443 },
-    { idx: 3, x: 138.197, y: 477.557 },
-    { idx: 4, x: 361.803, y: 550.211 },
-  ]);
+  const [nodeList, setNodeList] = useState<FakeNodeProps[]>([]);
   const [edgeList, setEdgeList] = useState<FakeEdgeProps[]>([
     //{ i: 0, j: 1, edgeRef: useRef<EdgeRef>({} as EdgeRef) },
   ]);
@@ -145,57 +147,158 @@ export const EditorPage: React.FC = () => {
   };
 
   const svgRef = React.useRef<SVGSVGElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-  const generateImage = React.useCallback(() => {
-    if (!svgRef.current) return;
+  const [imageUrl, setImageUrl] = React.useState<string>();
 
-    function triggerDownload(imgURI: string) {
-      const a = document.createElement("a");
-      a.download = "grafo.png";
-      a.target = "_blank";
-      a.href = imgURI;
+  const generateImage = React.useCallback(
+    (download: boolean = true) => {
+      if (!svgRef.current) return;
 
-      // trigger download button
-      // (set `bubbles` to false here.
-      // or just `a.click()` if you don't care about bubbling)
-      a.dispatchEvent(
-        new MouseEvent("click", {
-          view: window,
-          bubbles: false,
-          cancelable: true,
-        })
+      function triggerDownload(imgURI: string) {
+        const a = document.createElement("a");
+        a.download = "grafo.png";
+        a.target = "_blank";
+        a.href = imgURI;
+
+        // trigger download button
+        // (set `bubbles` to false here.
+        // or just `a.click()` if you don't care about bubbling)
+        a.dispatchEvent(
+          new MouseEvent("click", {
+            view: window,
+            bubbles: false,
+            cancelable: true,
+          })
+        );
+      }
+
+      const svgNode = svgRef.current;
+
+      const svgString = new XMLSerializer().serializeToString(svgNode as Node);
+      const svgBlob = new Blob([svgString], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+
+      const DOMURL = window.URL || window.webkitURL || window;
+      const url = DOMURL.createObjectURL(svgBlob);
+
+      const image = new Image();
+      image.width = svgNode.width.baseVal.value;
+      image.height = svgNode.height.baseVal.value;
+      image.src = url;
+      image.onload = function () {
+        if (!canvasRef.current) return;
+
+        canvasRef.current.width = image.width;
+        canvasRef.current.height = image.height;
+
+        const ctx = canvasRef.current.getContext("2d");
+        ctx?.drawImage(image, 0, 0);
+        DOMURL.revokeObjectURL(url);
+
+        const imgURI = canvasRef.current
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+
+        setImageUrl(imgURI);
+
+        if (download) triggerDownload(imgURI);
+      };
+    },
+    [svgRef, canvasRef]
+  );
+
+  const [graphSnapshot, loadingGraph, errorGraph] = useObject(
+    ref(db, `users/${authState?.uid}/graphs/${graphId}`)
+  );
+
+  React.useEffect(() => {
+    if (loadingGraph) return;
+
+    const graph = graphSnapshot?.val() as {
+      image: string;
+      edgeList: {
+        i: number;
+        j: number;
+      }[];
+      nodeList: {
+        idx: number;
+        x: number;
+        y: number;
+      }[];
+    };
+
+    if (graph?.nodeList) setNodeList(graph.nodeList);
+    else {
+      setNodeList([
+        { idx: 0, x: 500, y: 360 },
+        { idx: 1, x: 361.803, y: 169.789 },
+        { idx: 2, x: 138.197, y: 242.443 },
+        { idx: 3, x: 138.197, y: 477.557 },
+        { idx: 4, x: 361.803, y: 550.211 },
+      ]);
+    }
+    if (graph?.nodeList && graph?.edgeList) {
+      setEdgeRefs((edgeRefs) =>
+        Array(graph.edgeList.length)
+          .fill(null)
+          .map((_, i) => edgeRefs[i] || createRef<EdgeRef>())
+      );
+
+      setEdgeList(
+        graph.edgeList.map((edge, edgeId) => ({
+          i: edge.i,
+          j: edge.j,
+          edgeRef: edgeRefs[edgeId],
+        }))
       );
     }
+  }, [graphSnapshot, loadingGraph, setNodeList, setEdgeList, setEdgeRefs]);
 
-    const svgNode = svgRef.current;
+  React.useEffect(() => {}, [edgeList, edgeRefs]);
 
-    const svgString = new XMLSerializer().serializeToString(svgNode as Node);
-    const svgBlob = new Blob([svgString], {
-      type: "image/svg+xml;charset=utf-8",
+  React.useEffect(() => {
+    if (
+      !authState ||
+      loadingGraph ||
+      nodeList === undefined ||
+      edgeList === undefined
+    )
+      return;
+
+    // const graph = graphSnapshot?.val() as {
+    //   image: string;
+    //   edgeList: {
+    //     i: number;
+    //     j: number;
+    //   }[];
+    //   nodeList: {
+    //     idx: number;
+    //     x: number;
+    //     y: number;
+    //   }[];
+    // };
+
+    generateImage(false);
+
+    update(ref(db, "users/" + authState.uid + "/graphs/" + currentGraphId), {
+      ...(imageUrl ? { image: imageUrl } : {}),
+      nodeList,
+      edgeList: edgeList.map((edge) => ({ i: edge.i, j: edge.j })),
     });
 
-    const DOMURL = window.URL || window.webkitURL || window;
-    const url = DOMURL.createObjectURL(svgBlob);
+    // if (
+    //   isEqual(nodeList, graph.nodeList) ||
+    //   isEqual(
+    //     edgeList.map((edge) => ({ i: edge.i, j: edge.j })),
+    //     graph.edgeList.map((edge, edgeId) => ({ i: edge.i, j: edge.j }))
+    //   )
+    // ) {
+    // } else {
 
-    const image = new Image();
-    image.width = svgNode.width.baseVal.value;
-    image.height = svgNode.height.baseVal.value;
-    image.src = url;
-    image.onload = function () {
-      const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-      canvas!.width = image.width;
-      canvas!.height = image.height;
-
-      const ctx = canvas!.getContext("2d");
-      ctx?.drawImage(image, 0, 0);
-      DOMURL.revokeObjectURL(url);
-
-      const imgURI = canvas!
-        .toDataURL("image/png")
-        .replace("image/png", "image/octet-stream");
-      triggerDownload(imgURI);
-    };
-  }, [svgRef]);
+    // }
+  }, [authState, currentGraphId, setNodeList, setEdgeList, nodeList, edgeList]);
 
   return (
     <Modal
@@ -206,7 +309,7 @@ export const EditorPage: React.FC = () => {
       nodeData={nodeList}
       edgeData={edgeList}
     >
-      <canvas id="canvas" className="hidden"></canvas>
+      <canvas ref={canvasRef} id="canvas" className="hidden"></canvas>
       <div className="h-screen">
         <header className="absolute flex flex-wrap sm:justify-start sm:flex-nowrap z-[100] w-full bg-blue-600 text-sm py-3 sm:py-0">
           <nav
@@ -237,9 +340,9 @@ export const EditorPage: React.FC = () => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   >
                     <line x1="3" x2="21" y1="6" y2="6" />
                     <line x1="3" x2="21" y1="12" y2="12" />
@@ -253,9 +356,9 @@ export const EditorPage: React.FC = () => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   >
                     <path d="M18 6 6 18" />
                     <path d="m6 6 12 12" />
@@ -270,7 +373,7 @@ export const EditorPage: React.FC = () => {
               <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:ps-7">
                 <a
                   className="font-medium text-white/80 hover:text-white sm:py-6"
-                  href="#"
+                  href="/"
                 >
                   Seus Grafos
                 </a>
@@ -324,66 +427,88 @@ export const EditorPage: React.FC = () => {
             </div>
           </nav>
         </header>
-        <main id="content" className="">
-          <div className="h-full max-w-[85rem] mx-auto">
-            <div className="h-full grid grid-cols-3">
-              <svg
-                ref={svgRef}
-                className="h-screen absolute top-0 left-0 z-2 w-full col-span-2"
-                style={{
-                  backgroundColor: "white",
-                }}
-              >
-                {edgeList.map((edge) => (
-                  <Edge
-                    key={`${edge.i},${edge.j}`}
-                    i={edge.i}
-                    j={edge.j}
-                    initialX1={nodeList[edge.i].x}
-                    initialY1={nodeList[edge.i].y}
-                    initialX2={nodeList[edge.j].x}
-                    initialY2={nodeList[edge.j].y}
-                    ref={edge.edgeRef}
-                  />
-                ))}
+        {loadingAuthState && loadingGraph ? (
+          <div role="status">
+            <svg
+              aria-hidden="true"
+              className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="currentColor"
+              />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentFill"
+              />
+            </svg>
+            <span className="sr-only">Loading...</span>
+          </div>
+        ) : (
+          <main id="content" className="">
+            <div className="h-full max-w-[85rem] mx-auto">
+              <div className="h-full grid grid-cols-3">
+                <svg
+                  ref={svgRef}
+                  className="h-screen absolute top-0 left-0 z-2 w-full col-span-2"
+                  style={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  {edgeList.map((edge) => (
+                    <Edge
+                      key={`${edge.i},${edge.j}`}
+                      i={edge.i}
+                      j={edge.j}
+                      initialX1={nodeList[edge.i].x}
+                      initialY1={nodeList[edge.i].y}
+                      initialX2={nodeList[edge.j].x}
+                      initialY2={nodeList[edge.j].y}
+                      ref={edge.edgeRef}
+                    />
+                  ))}
 
-                {nodeList.map((node) => (
-                  <Node
-                    key={node.idx}
-                    idx={node.idx}
-                    x={node.x}
-                    y={node.y}
-                    onMoved={handleNodeStartMoving}
-                    onCtrlClick={handleNodeCtrlClick}
-                    onFinishedMoving={handleNodeFinishedMoving}
-                  />
-                ))}
-              </svg>
+                  {nodeList.map((node) => (
+                    <Node
+                      key={node.idx}
+                      idx={node.idx}
+                      x={node.x}
+                      y={node.y}
+                      onMoved={handleNodeStartMoving}
+                      onCtrlClick={handleNodeCtrlClick}
+                      onFinishedMoving={handleNodeFinishedMoving}
+                    />
+                  ))}
+                </svg>
 
-              <div className="flex flex-col p-4 m-4 rounded-xl bg-gray-200 absolute md:top-24 lg:top-24 lg:right-2 ">
-                <p>
-                  Para adicionar uma aresta, segure Ctrl, e clique em 2
-                  vértices.
-                </p>
-                <div className="flex flex-row gap-2">
-                  <Button onClick={() => handleInsertNode(nodeList.length)}>
-                    Insert Node
-                  </Button>
-                  <Button
-                    aria-describedby={id}
-                    type="button"
-                    onClick={handleClick}
-                  >
-                    Exportar Grafo
-                  </Button>
-                  <Button onClick={() => navigate("../")}>
-                    Voltar para a tela anterior
-                  </Button>
+                <div className="flex flex-col p-4 m-4 rounded-xl bg-gray-200 absolute md:top-24 lg:top-24 lg:right-2 ">
+                  <p>
+                    Para adicionar uma aresta, segure Ctrl, e clique em 2
+                    vértices.
+                  </p>
+                  <div className="flex flex-row gap-2">
+                    <Button onClick={() => handleInsertNode(nodeList.length)}>
+                      Insert Node
+                    </Button>
+                    <Button
+                      aria-describedby={id}
+                      type="button"
+                      onClick={handleClick}
+                    >
+                      Exportar Grafo
+                    </Button>
+                    <Button onClick={() => navigate("../")}>
+                      Voltar para a tela anterior
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </main>
+          </main>
+        )}
       </div>
     </Modal>
   );
