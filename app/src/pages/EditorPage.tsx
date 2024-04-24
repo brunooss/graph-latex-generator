@@ -122,14 +122,14 @@ export const EditorPage: React.FC = () => {
     // Proibe arestas múltiplas
     for (let k = 0; k < edgeList.length; k++) {
       const edge = edgeList[k];
-  
+
       if ((edge.i == i && edge.j == j) || (edge.i == j && edge.j == i)) {
         const newList = [...edgeList.slice(0, k), ...edgeList.slice(k + 1)];
         setEdgeList(newList);
         return;
       }
     }
-  
+
     // Adiciona uma nova aresta na lista
     setNumberOfEdges(numberOfEdges + 1);
     const newEdge: FakeEdgeProps = {
@@ -244,8 +244,7 @@ export const EditorPage: React.FC = () => {
 
     if (graph?.nodeList) setNodeList(graph.nodeList);
     else {
-      setNodeList([
-      ]);
+      setNodeList([]);
     }
     if (graph?.nodeList && graph?.edgeList) {
       setEdgeRefs((edgeRefs) =>
@@ -389,7 +388,7 @@ export const EditorPage: React.FC = () => {
                   className="font-medium text-white/80 hover:text-white sm:py-6"
                   href="#"
                 >
-                  Editor de Grafos
+                  Graphex
                 </a>
 
                 <a

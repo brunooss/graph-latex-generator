@@ -24,7 +24,7 @@ export const MenuPage: React.FC = () => {
             >
               <div className="flex flex-row gap-2">
                 <GoGraph color="#FFF" />{" "}
-                <span className="text-white">Grafo</span>
+                <span className="text-white">Graphex</span>
               </div>
             </a>
             <div className="md:hidden">

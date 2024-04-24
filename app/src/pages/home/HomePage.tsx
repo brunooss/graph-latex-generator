@@ -126,7 +126,7 @@ export const HomePage: React.FC = () => {
                 className="font-medium text-white/80 hover:text-white sm:py-6"
                 href="/editor"
               >
-                Editor de Grafos
+                Graphex
               </a>
 
               <a
