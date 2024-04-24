@@ -69,7 +69,8 @@ O sistema contará com uma interface web/mobile, que será desenvolvida com _Rea
     - Criar modelos padrão a serem exibidos no editor de grafos disponíveis no `LaTeX` [Laila]
     - Fazer função que recebe informações de grafo construído em editor (coordenadas de vértices, cores, arestas) e gera código `LaTeX` [Thiago]
     - Adicionar botão para exportar o código ou imagem .png [Bruno]
-    - 
+
+  ### Diagramas
 
 
     ![diagrama de classes](https://github.com/brunooss/graph-latex-generator/blob/36110d100c0b0e7a96535465128736e5986d9f25/image.png?raw=true)
