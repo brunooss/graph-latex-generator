@@ -144,14 +144,7 @@ export const Modal: React.FC<{
               <div className="p-4 overflow-y-auto">
                 <PopupBody ref={textRef}> {text} </PopupBody>
               </div>
-              <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t 700">
-                <button
-                  type="button"
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none 900 700 neutral-800"
-                  data-hs-overlay="#hs-basic-modal"
-                >
-                  Close
-                </button>
+              <div className="flex justify-center items-center gap-x-2 py-3 px-4 border-t 700">
                 <button
                   type="button"
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"

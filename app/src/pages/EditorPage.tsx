@@ -56,8 +56,8 @@ export const EditorPage: React.FC = () => {
     } else {
       const newNode: FakeNodeProps = {
         idx: idx,
-        x: 50,
-        y: 250,
+        x: 750,
+        y: 350,
       };
       // Adiciona o novo nó à lista
       const newList = [...nodeList, newNode];
@@ -491,14 +491,14 @@ export const EditorPage: React.FC = () => {
                   ))}
                 </svg>
 
-                <div className="flex flex-col p-4 m-4 rounded-xl bg-gray-200 absolute md:top-24 lg:top-24 lg:right-2 ">
+                <div className="flex flex-col p-4 m-4 rounded-xl bg-gray-200 absolute bottom-0 left-1/2 transform -translate-x-1/2">
                   <p>
                     Para adicionar uma aresta, segure Ctrl, e clique em 2
                     vértices.
                   </p>
                   <div className="flex flex-row gap-2">
                     <Button onClick={() => handleInsertNode(nodeList.length)}>
-                      Insert Node
+                      Inserir Nó
                     </Button>
                     <Button
                       aria-describedby={id}
